@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArousX的资源站 - 传送门</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #0f172a; margin: 0; overflow: hidden; }
+        .glow-btn { position: relative; background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%); transition: all 0.3s ease; }
+        .glow-btn::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(135deg, #60a5fa, #818cf8, #c084fc);
+            z-index: -1; border-radius: 9999px; filter: blur(15px); opacity: 0; transition: opacity 0.3s ease;
+        }
+        .glow-btn:hover { transform: translateY(-2px) scale(1.05); }
+        .glow-btn:hover::before { opacity: 1; }
+        @keyframes pulse-slow { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.2); opacity: 0.5; } }
+        .bg-orb { animation: pulse-slow 6s infinite ease-in-out; }
+        .bg-orb-delayed { animation: pulse-slow 8s infinite ease-in-out 2s; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative">
+    <!-- 背景光效 -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[100px] opacity-30 bg-orb"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600 rounded-full mix-blend-screen filter blur-[100px] opacity-30 bg-orb-delayed"></div>
+    
+    <div class="relative z-10 text-center px-4 flex flex-col items-center">
+        <!-- Logo -->
+        <div class="w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 flex items-center justify-center mb-8 shadow-2xl">
+            <span class="text-3xl font-bold text-blue-400">X</span>
+        </div>
+        <!-- Title -->
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
+            ArousX<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">的资源站</span>
+        </h1>
+        <p class="text-slate-400 text-lg md:text-xl mb-12 max-w-md mx-auto">精选优质软件与工具，点击进入资源目录。</p>
+        
+        <!-- Entry Button -->
+        <a href="catalog.html" class="glow-btn px-10 py-5 rounded-full text-white font-bold text-xl flex items-center space-x-3 shadow-[0_0_40px_rgba(59,130,246,0.4)]">
+            <span>开启资源目录</span>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+            </svg>
+        </a>
+        
+        <p class="mt-8 text-slate-500 text-sm">© 2026 ArousX Resource Lab · 建议保存书签</p>
+    </div>
+</body>
+</html>

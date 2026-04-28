@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源目录 - ArousX的资源站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { transform: translateY(-5px); border-color: rgba(96, 165, 250, 0.5); box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3); }
+        .quark-btn { background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%); transition: all 0.2s; }
+        .quark-btn:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+    <nav class="sticky top-0 z-50 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
+                        <span class="text-blue-400 font-bold text-lg">X</span>
+                    </div>
+                    <span class="text-xl font-bold text-white tracking-tight">ArousX<span class="text-slate-400 font-normal text-sm ml-2">资源目录</span></span>
+                </div>
+                <a href="index.html" class="text-sm text-slate-400 hover:text-white transition-colors flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>返回传送门</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-white mb-2">资源列表</h1>
+            <p class="text-slate-400 text-sm">选择下方资源，点击即可跳转至夸克云盘下载地址。</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <!-- 【卡片开始：你可以直接复制下面这一整段来增加新的软件】 -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 border border-blue-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <!-- 1. 修改分类文字 -->
+                    <span class="text-xs font-semibold px-2 py-1 bg-slate-800 text-slate-300 rounded-md">精品软件</span>
+                </div>
+                <!-- 2. 修改软件名字 -->
+                <h3 class="font-bold text-white text-lg mb-1">示例资源 A</h3>
+                <!-- 3. 修改软件详细描述 -->
+                <p class="text-sm text-slate-400 mb-6 flex-grow">这是一个资源的描述文字，你可以自行修改内容。建议写明软件功能或版本。</p>
+                <!-- 4. 修改 href="" 里面的链接地址 -->
+                <a href="https://pan.quark.cn/s/这里填你的分享链接" target="_blank" class="quark-btn w-full py-2.5 rounded-lg text-white font-medium text-sm flex items-center justify-center">
+                    <span>前往夸克云盘</span>
+                </a>
+            </div>
+            <!-- 【卡片结束】 -->
+
+            <!-- 【如果还要添加，就从这里粘贴下一段】 -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <!-- 1. 修改分类文字 -->
+                    <span class="text-xs font-semibold px-2 py-1 bg-slate-800 text-slate-300 rounded-md">实用工具</span>
+                </div>
+                <!-- 2. 修改软件名字 -->
+                <h3 class="font-bold text-white text-lg mb-1">示例资源 B</h3>
+                <!-- 3. 修改软件详细描述 -->
+                <p class="text-sm text-slate-400 mb-6 flex-grow">另一个资源的介绍，支持高速转存。欢迎使用。</p>
+                <!-- 4. 修改 href="" 里面的链接地址 -->
+                <a href="https://pan.quark.cn/s/这里填你的分享链接" target="_blank" class="quark-btn w-full py-2.5 rounded-lg text-white font-medium text-sm flex items-center justify-center">
+                    <span>前往夸克云盘</span>
+                </a>
+            </div>
+
+        </div>
+    </main>
+    <footer class="py-10 text-center text-slate-500 text-xs">
+        © 2026 ArousX的资源站 · 仅供学习交流使用
+    </footer>
+</body>
+</html>
