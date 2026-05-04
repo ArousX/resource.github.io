@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohub | 你的匿名心事港湾</title>
+
+<style>
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-light: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #38bdf8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', 'PingFang SC', sans-serif;
+}
+
+/* ================= 背景动画 ================= */
+body {
+    background: linear-gradient(-45deg, #000000, #141414, #080808, #1c1c1c);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: var(--text-light);
+    min-height: 100vh;
+    padding: 3rem 1.5rem;
+    position: relative;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ================= 动态悬浮几何粒子 ================= */
+.particles {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.particles li {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    animation: floatUp 25s linear infinite;
+    bottom: -150px;
+    border-radius: 4px;
+}
+
+.particles li:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+.particles li:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+.particles li:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+.particles li:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+.particles li:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+.particles li:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+.particles li:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+.particles li:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+.particles li:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+.particles li:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+@keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+    100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+header h1 {
+    font-size: 2.8rem;
+    font-weight: 300;
+}
+
+header p {
+    color: var(--text-muted);
+}
+
+/* ================= 强化立体感的发布盒子 ================= */
+.publish-box {
+    background: rgba(25, 25, 25, 0.4); /* 稍微加深一点底色以便反射出立体阴影 */
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02); /* 底部边框变暗，模拟光照死角 */
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 4rem;
+    
+    /* 核心 3D 阴影：深色大外阴影 + 贴身重阴影 + 顶部高光内边 + 底部暗色内边 */
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+        0 4px 15px rgba(0, 0, 0, 0.6),        
+        inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+        inset 0 -1px 1px rgba(0, 0, 0, 0.3);       
+}
+
+/* ================= 内凹立体感的输入框 ================= */
+input, textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    
+    /* 顶部内阴影制造下凹感，底部白光制造刻线感 */
+    box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.6), 
+        0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+input:focus, textarea:focus {
+    border-color: #6a9bd8;
+    background: rgba(106, 155, 216, 0.05);
+    box-shadow: 
+        inset 0 2px 5px rgba(0, 0, 0, 0.4), 
+        0 0 15px rgba(106, 155, 216, 0.2), 
+        inset 0 0 10px rgba(106, 155, 216, 0.1);
+}
+
+textarea {
+    min-height: 100px;
+}
+
+button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 100%); 
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 2px;
+    
+    /* 按钮本身的立体感 */
+    box-shadow: 
+        0 4px 15px rgba(56, 189, 248, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+button:hover {
+    box-shadow: 
+        0 8px 25px rgba(139, 92, 246, 0.5), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.4); 
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+.message-board {
+    display: grid;
+    gap: 1rem;
+}
+
+/* ================= 附带轻度立体感的留言卡片 ================= */
+.message-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    overflow: hidden; 
+    transition: all 0.3s ease;
+    
+    /* 较弱的卡片立体阴影 */
+    box-shadow: 
+        0 10px 20px -5px rgba(0, 0, 0, 0.5), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* 鼠标放上留言卡片时会有轻轻浮起的效果 */
+.message-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 15px 30px -5px rgba(0, 0, 0, 0.7), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.message-content { 
+    font-size: 1.1rem; 
+    line-height: 1.7; 
+    margin-bottom: 1.2rem; 
+    font-weight: 300; 
+    white-space: pre-wrap;     
+    overflow-wrap: break-word; 
+    word-break: break-all;     
+}
+    
+.message-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.loading {
+    text-align: center;
+    color: var(--text-muted);
+}
+</style>
+</head>
+
+<body>
+
+<ul class="particles">
+    <li></li><li></li><li></li><li></li><li></li>
+    <li></li><li></li><li></li><li></li><li></li>
+</ul>
+
+<div class="container">
+
+<header>
+    <h1>Mohub.online</h1>
+    <p>匿名树洞</p>
+</header>
+
+<div class="publish-box">
+    <input id="authorInput" placeholder="你的代号（可选）">
+    <textarea id="contentInput" placeholder="写下你的心事"></textarea>
+    <button id="submitBtn">发送</button>
+</div>
+
+<div class="message-board" id="messageBoard">
+    <div class="loading">加载中...</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const client = window.supabase.createClient(
+    'https://ovfwarzvmdynmysdagmy.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92Zndhcnp2bWR5bm15c2RhZ215Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNTQ5NzQsImV4cCI6MjA5MTczMDk3NH0.ZzAec-6TcRIOxfviuWSx8rdwR8S_8YeoeD_L7IWt0Gs'
+);
+
+const TABLE = 'hold';
+
+const board = document.getElementById('messageBoard');
+const btn = document.getElementById('submitBtn');
+const authorInput = document.getElementById('authorInput');
+const contentInput = document.getElementById('contentInput');
+
+async function load() {
+    const { data, error } = await client
+        .from(TABLE)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        board.innerHTML = error.message;
+        return;
+    }
+
+    board.innerHTML = '';
+
+    if (!data.length) {
+        board.innerHTML = '<div class="loading">暂无内容</div>';
+        return;
+    }
+
+    data.forEach(i => board.appendChild(card(i)));
+}
+
+async function send() {
+    const author = authorInput.value.trim() || '匿名';
+    const content = contentInput.value.trim();
+
+    if (!content) return alert('不能为空');
+
+    btn.disabled = true;
+
+    const { data, error } = await client
+        .from(TABLE)
+        .insert([{ author, content }])
+        .select();
+
+    btn.disabled = false;
+
+    if (error) return alert(error.message);
+
+    contentInput.value = '';
+    board.prepend(card(data[0]));
+}
+
+function card(i) {
+    const div = document.createElement('div');
+    div.className = 'message-card';
+
+    div.innerHTML = `
+        <div class="message-content">${i.content}</div>
+        <div class="message-footer">
+            <span>${i.author}</span>
+            <span>${new Date(i.created_at).toLocaleString()}</span>
+        </div>
+    `;
+    return div;
+}
+
+btn.onclick = send;
+load();
+</script>
+
+</body>
+</html>
