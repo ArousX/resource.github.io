@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>像素穿梭 - 舒缓版</title>
+    <style>
+        body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #2c3e50; font-family: 'Microsoft YaHei', sans-serif; overflow: hidden; }
+        canvas { border: 4px solid #ecf0f1; background: #34495e; cursor: pointer; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-radius: 8px; }
+        .score { position: absolute; top: 30px; color: #ecf0f1; font-size: 28px; font-weight: bold; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+    <div class="score" id="scoreDiv">分数: 0</div>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreDiv = document.getElementById('scoreDiv');
+
+// --- 游戏配置 ---
+let gameState = 'START'; // START, PLAYING, GAMEOVER
+let bird = { x: 50, y: 300, w: 30, h: 30, velocity: 0, gravity: 0.05, jump: -2.5 };
+let pipes = [];
+let frame = 0;
+let score = 0;
+let lastPipeHeight = 300; // 用于控制高度差
+
+// --- 交互处理 ---
+function handleInteraction() {
+    if (gameState === 'START') {
+        gameState = 'PLAYING';
+    } else if (gameState === 'PLAYING') {
+        bird.velocity = bird.jump;
+    } else if (gameState === 'GAMEOVER') {
+        resetGame();
+    }
+}
+document.addEventListener('keydown', (e) => { if(e.code === 'Space') handleInteraction(); });
+canvas.addEventListener('mousedown', (e) => { e.preventDefault(); handleInteraction(); });
+
+function resetGame() {
+    bird.y = 300; bird.velocity = 0;
+    pipes = []; score = 0; frame = 0; lastPipeHeight = 300;
+    scoreDiv.innerHTML = `分数: 0`;
+    gameState = 'PLAYING';
+}
+
+function createPipe() {
+    const gap = 180;          // 缺口大小（越大越简单）
+    const minHeight = 80;     // 柱子最小高度
+    const maxDiff = 100;      // 相邻柱子最大高度差限制
+
+    // 基于上一个柱子高度计算新高度，防止落差太大
+    let targetHeight = lastPipeHeight + (Math.random() * maxDiff * 2 - maxDiff);
+    
+    // 确保不超出画布边界
+    if (targetHeight < minHeight) targetHeight = minHeight;
+    if (targetHeight > canvas.height - gap - minHeight) targetHeight = canvas.height - gap - minHeight;
+
+    lastPipeHeight = targetHeight;
+    pipes.push({ x: canvas.width, top: targetHeight, bottom: canvas.height - targetHeight - gap, w: 60 });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (gameState === 'START') {
+        // 开始界面
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#f1c40f';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 36px Arial';
+        ctx.fillText('像素穿梭', canvas.width/2, 260);
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText('点击鼠标 或 空格键 开始', canvas.width/2, 320);
+        ctx.font = '14px Arial';
+        ctx.fillText('提示：高度落差已优化，祝你好运！', canvas.width/2, 360);
+    } 
+    
+    else if (gameState === 'PLAYING' || gameState === 'GAMEOVER') {
+        if (gameState === 'PLAYING') {
+            bird.velocity += bird.gravity;
+            if (bird.velocity > 7) bird.velocity = 7; // 限制下落速度
+            bird.y += bird.velocity;
+            
+            // 每隔130帧生成一个柱子，水平间距更宽
+            if (frame % 130 === 0) createPipe();
+            frame++;
+        }
+
+        // 处理管道
+        for (let i = pipes.length - 1; i >= 0; i--) {
+            if (gameState === 'PLAYING') pipes[i].x -= 2.2; // 移动速度稍微减慢
+
+            // 碰撞检测
+            if (bird.x + bird.w > pipes[i].x && bird.x < pipes[i].x + pipes[i].w) {
+                if (bird.y < pipes[i].top || bird.y + bird.h > canvas.height - pipes[i].bottom) {
+                    gameState = 'GAMEOVER';
+                }
+            }
+
+            // 绘制管道
+            ctx.fillStyle = '#27ae60';
+            ctx.fillRect(pipes[i].x, 0, pipes[i].w, pipes[i].top);
+            ctx.fillRect(pipes[i].x, canvas.height - pipes[i].bottom, pipes[i].w, pipes[i].bottom);
+
+            // 计分
+            if (gameState === 'PLAYING' && pipes[i].x + pipes[i].w < bird.x && !pipes[i].scored) {
+                score++;
+                pipes[i].scored = true;
+                scoreDiv.innerHTML = `分数: ${score}`;
+            }
+
+            if (pipes[i].x + pipes[i].w < 0) pipes.splice(i, 1);
+        }
+
+        // 绘制玩家 (带边框的小方块)
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+        ctx.strokeStyle = '#d35400';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(bird.x, bird.y, bird.w, bird.h);
+
+        // 边界检测
+        if (bird.y + bird.h > canvas.height || bird.y < 0) gameState = 'GAMEOVER';
+
+        if (gameState === 'GAMEOVER') {
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.font = '30px Arial';
+            ctx.fillText('游戏结束', canvas.width/2, 280);
+            ctx.font = '24px Arial';
+            ctx.fillText('得分: ' + score, canvas.width/2, 330);
+            ctx.font = '18px Arial';
+            ctx.fillText('点击屏幕重新开始', canvas.width/2, 380);
+        }
+    }
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
