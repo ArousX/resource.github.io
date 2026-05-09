@@ -3,150 +3,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>像素穿梭 - 手机完美版</title>
+    <title>ArousX_CORE // 飞行穿梭</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a1a; font-family: 'Microsoft YaHei', sans-serif; overflow: hidden; touch-action: manipulation; }
-        canvas { background: #222; display: block; }
-        .score { position: absolute; top: 40px; width: 100%; text-align: center; color: #fff; font-size: 32px; font-weight: bold; pointer-events: none; text-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 10; }
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; 
+            background: #050505; 
+            overflow: hidden; 
+            touch-action: none; /* 禁用移动端默认手势 */
+            user-select: none;
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* 霓虹发光文字 */
+        .neon-text {
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #3b82f6, 0 0 40px #3b82f6;
+        }
+
+        /* 玻璃拟态面板 */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-tech {
+            background: transparent;
+            border: 1px solid #3b82f6;
+            color: #3b82f6;
+            transition: all 0.2s;
+        }
+        .btn-tech:hover, .btn-tech:active {
+            background: #3b82f6;
+            color: #050505;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
     </style>
 </head>
-<body>
-    <div class="score" id="scoreDiv">0</div>
+<body class="relative text-slate-200">
+
     <canvas id="gameCanvas"></canvas>
 
+    <div id="hud" class="absolute top-0 left-0 w-full p-6 flex justify-between items-start pointer-events-none z-10 opacity-0 transition-opacity duration-300">
+        <div class="text-xs font-bold text-blue-500 tracking-widest">
+            > SYS_STATUS: <span class="text-white">ACTIVE</span><br>
+            > MODULE: <span class="text-white">EVASION</span>
+        </div>
+        <div class="text-right">
+            <div class="text-xs text-blue-500 tracking-widest mb-1">> SCORE</div>
+            <div id="scoreDisplay" class="text-5xl font-black neon-text">0</div>
+        </div>
+    </div>
+
+    <div id="startScreen" class="absolute inset-0 flex items-center justify-center z-20">
+        <div class="glass-panel p-8 rounded-lg flex flex-col items-center max-w-sm w-11/12 border-l-4 border-l-blue-500">
+            <div class="w-12 h-12 bg-blue-500 mb-4 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                <span class="text-2xl font-black text-[#050505]">X</span>
+            </div>
+            <h1 class="text-2xl font-black text-white mb-1 tracking-tight">AROUSX<span class="text-blue-500">_FLIGHT</span></h1>
+            <p class="text-xs text-slate-400 mb-8 font-mono tracking-widest uppercase">> 终端闪避协议</p>
+            
+            <div class="text-sm text-slate-300 mb-6 text-center leading-relaxed">
+                点击屏幕或按[空格键]<br>启动推进器，躲避防火墙
+            </div>
+
+            <button id="startBtn" class="btn-tech w-full py-3 font-bold tracking-widest uppercase text-sm">
+                > INITIALIZE [开始]
+            </button>
+            <a href="catalog.html" class="mt-4 text-xs text-slate-500 hover:text-blue-400 transition-colors tracking-widest">
+                [ ESC ] 返回档案目录
+            </a>
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="absolute inset-0 flex items-center justify-center z-30 hidden">
+        <div class="glass-panel p-8 rounded-lg flex flex-col items-center max-w-sm w-11/12 border-l-4 border-l-red-500">
+            <h2 class="text-3xl font-black text-white mb-2 tracking-tight text-shadow-[0_0_10px_#ef4444]">CRITICAL_HIT</h2>
+            <p class="text-xs text-red-400 mb-6 font-mono tracking-widest uppercase">> 系统连接中断</p>
+            
+            <div class="bg-slate-900/50 w-full p-4 rounded border border-slate-700 text-center mb-6">
+                <div class="text-xs text-slate-500 tracking-widest mb-1">FINAL_SCORE</div>
+                <div id="finalScore" class="text-4xl font-black text-white">0</div>
+            </div>
+
+            <button id="restartBtn" class="btn-tech w-full py-3 font-bold tracking-widest uppercase text-sm">
+                > REBOOT [重试]
+            </button>
+            <a href="catalog.html" class="mt-4 text-xs text-slate-500 hover:text-blue-400 transition-colors tracking-widest">
+                [ ESC ] 断开连接
+            </a>
+        </div>
+    </div>
+
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const scoreDiv = document.getElementById('scoreDiv');
-
-// 适配屏幕
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// 游戏参数
-let gameState = 'START';
-let birdSize = Math.min(canvas.width, canvas.height) * 0.07; 
-let bird = { 
-    x: canvas.width * 0.05, // 修改：位置往左挪，给右手操作留出视野
-    y: canvas.height / 2, 
-    w: birdSize, 
-    h: birdSize, 
-    velocity: 0, 
-    gravity: 0.05, 
-    jump: -2.5 
-};
-let pipes = [];
-let frame = 0;
-let score = 0;
-let moveSpeed = 2.5; // 速度适中
-let lastPipeHeight = canvas.height / 2;
-
-function handleInteraction(e) {
-    if (e) e.preventDefault();
-    if (gameState === 'START') {
-        gameState = 'PLAYING';
-    } else if (gameState === 'PLAYING') {
-        bird.velocity = bird.jump;
-    } else if (gameState === 'GAMEOVER') {
-        resetGame();
-    }
-}
-
-document.addEventListener('keydown', (e) => { if(e.code === 'Space') handleInteraction(); });
-canvas.addEventListener('touchstart', handleInteraction, { passive: false });
-canvas.addEventListener('mousedown', handleInteraction);
-
-function resetGame() {
-    bird.y = canvas.height / 2; bird.velocity = 0;
-    pipes = []; score = 0; frame = 0; lastPipeHeight = canvas.height / 2;
-    scoreDiv.innerHTML = `0`;
-    gameState = 'PLAYING';
-}
-
-function createPipe() {
-    const gap = canvas.height * 0.28; 
-    const minHeight = 60;
-    const maxDiff = canvas.height * 0.22; 
-
-    let targetHeight = lastPipeHeight + (Math.random() * maxDiff * 2 - maxDiff);
-    if (targetHeight < minHeight) targetHeight = minHeight;
-    if (targetHeight > canvas.height - gap - minHeight) targetHeight = canvas.height - gap - minHeight;
-
-    lastPipeHeight = targetHeight;
-    pipes.push({ x: canvas.width, top: targetHeight, bottom: canvas.height - targetHeight - gap, w: 70, scored: false });
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (gameState === 'START') {
-        ctx.fillStyle = 'rgba(0,0,0,0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#f1c40f';
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 28px Arial';
-        ctx.fillText('像素穿梭', canvas.width/2, canvas.height/2 - 20);
-        ctx.fillStyle = '#fff';
-        ctx.font = '18px Arial';
-        ctx.fillText('点击屏幕开始', canvas.width/2, canvas.height/2 + 30);
-    } 
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
     
-    else if (gameState === 'PLAYING' || gameState === 'GAMEOVER') {
-        if (gameState === 'PLAYING') {
-            bird.velocity += bird.gravity;
-            bird.y += bird.velocity;
-            if (frame % Math.floor(canvas.width / 4) === 0) createPipe();
-            frame++;
+    // UI 元素
+    const startScreen = document.getElementById('startScreen');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const hud = document.getElementById('hud');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const finalScoreDisplay = document.getElementById('finalScore');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    // 基础设置
+    let width, height;
+    let gameState = 'START'; // START, PLAYING, GAMEOVER
+    let score = 0;
+    let frames = 0;
+    
+    // 物理与实体
+    let player = {};
+    let pipes = [];
+    let particles = [];
+    let bgOffset = 0;
+    
+    // ==========================================
+    // 🎮 游戏核心难度与手感参数（可以在这里修改）
+    // ==========================================
+    
+    // 1. 游戏整体前进速度 (管子向左移动的速度)。数值越大，游戏节奏越快、越难。
+    const GAME_SPEED = 3.5; 
+    
+    // 2. 下坠重力加速度。数值越大，主角掉落得越快，感觉越“重”。
+    const GRAVITY = 0.05; 
+    
+    // 3. 每次点击的跳跃力度。必须是负数（因为Canvas坐标Y轴向下）。绝对值越大，单次跳得越高。
+    const JUMP_FORCE = -3.5; 
+    
+    // 4. 管子（障碍物）的宽度。
+    const PIPE_WIDTH = 60; 
+    
+    // 5. 生成管子的横向间距。数值越小，管子出现得越密集。
+    const PIPE_SPACING = 600; 
+    
+    // ==========================================
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 核心对象类
+    class Player {
+        constructor() {
+            this.size = Math.min(width, height) * 0.05;
+            this.size = Math.max(20, Math.min(this.size, 40)); // 限制主角大小在 20px 到 40px 之间
+            this.x = width * 0.2;
+            this.y = height / 2;
+            this.vy = 0; // 当前垂直速度
+            this.rotation = 0; // 飞行仰角
         }
 
-        for (let i = pipes.length - 1; i >= 0; i--) {
-            if (gameState === 'PLAYING') pipes[i].x -= moveSpeed;
+        flap() {
+            this.vy = JUMP_FORCE; // 应用跳跃力度
+            // 每次跳跃产生尾迹粒子
+            for(let i=0; i<5; i++) createParticle(this.x, this.y + this.size/2, '#3b82f6');
+        }
 
-            // 碰撞检测
-            if (bird.x + bird.w * 0.7 > pipes[i].x && bird.x < pipes[i].x + pipes[i].w) {
-                if (bird.y + bird.h * 0.15 < pipes[i].top || bird.y + bird.h * 0.85 > canvas.height - pipes[i].bottom) {
-                    gameState = 'GAMEOVER';
+        update() {
+            this.vy += GRAVITY; // 持续受到重力影响下落
+            
+            // 终端速度限制（防止掉落速度无限叠加导致瞬间摔死）
+            // 如果你想让它掉得更猛，可以把 10 改大（比如 15）
+            if (this.vy > 10) this.vy = 10; 
+            
+            this.y += this.vy;
+
+            // 根据下落/上升速度自动调整机头角度 (平滑插值)
+            let targetRotation = Math.min(Math.PI / 4, Math.max(-Math.PI / 4, (this.vy * 0.1)));
+            this.rotation += (targetRotation - this.rotation) * 0.1;
+
+            // 产生常规尾迹
+            if (frames % 3 === 0) createParticle(this.x - this.size/2, this.y, 'rgba(59, 130, 246, 0.5)', true);
+
+            // 触顶或触底死亡
+            if (this.y + this.size/2 >= height || this.y - this.size/2 <= 0) {
+                triggerGameOver();
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            
+            // 绘制科幻三角形核心
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#3b82f6';
+            ctx.fillStyle = '#60a5fa';
+            ctx.beginPath();
+            ctx.moveTo(this.size, 0);
+            ctx.lineTo(-this.size/2, -this.size/2);
+            ctx.lineTo(-this.size/2, this.size/2);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 核心发光点
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(this.size/4, 0, this.size/6, 0, Math.PI*2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+    }
+
+    class Pipe {
+        constructor() {
+            this.x = width;
+            
+            // ==========================================
+            // 6. 上下管子之间的垂直通道间隙 (gap)
+            // 这里使用了动态计算：最小 160px 或者 屏幕高度的 25% 取大值。
+            // 如果你想让游戏变难，可以减小这个数值（例如直接写死 this.gap = 130;）
+            this.gap = Math.max(160, height * 0.25); 
+            // ==========================================
+            
+            let minPipeHeight = 50; // 管子最小高度
+            let maxPos = height - minPipeHeight - this.gap;
+            this.topHeight = Math.max(minPipeHeight, Math.random() * maxPos);
+            this.bottomY = this.topHeight + this.gap;
+            this.passed = false;
+        }
+
+        update() {
+            this.x -= GAME_SPEED; // 管子根据游戏速度向左移动
+
+            // 得分判定
+            if (!this.passed && player.x > this.x + PIPE_WIDTH) {
+                score++;
+                scoreDisplay.innerText = score;
+                this.passed = true;
+            }
+
+            // 碰撞检测 (使用稍小的判定框让手感更好，允许轻微擦边)
+            let hitboxMargin = player.size * 0.4;
+            if (player.x + hitboxMargin > this.x && player.x - hitboxMargin < this.x + PIPE_WIDTH) {
+                if (player.y - hitboxMargin < this.topHeight || player.y + hitboxMargin > this.bottomY) {
+                    triggerGameOver();
                 }
             }
-
-            ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(pipes[i].x, 0, pipes[i].w, pipes[i].top);
-            ctx.fillRect(pipes[i].x, canvas.height - pipes[i].bottom, pipes[i].w, pipes[i].bottom);
-
-            if (gameState === 'PLAYING' && pipes[i].x + pipes[i].w < bird.x && !pipes[i].scored) {
-                score++;
-                pipes[i].scored = true;
-                scoreDiv.innerHTML = score;
-            }
-            if (pipes[i].x + pipes[i].w < 0) pipes.splice(i, 1);
         }
 
-        // 画主角
-        ctx.fillStyle = '#f1c40f';
-        ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+        draw() {
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#0ea5e9'; // 青色发光
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
 
-        if (bird.y + bird.h > canvas.height || bird.y < 0) gameState = 'GAMEOVER';
+            // 上管子
+            ctx.fillRect(this.x, 0, PIPE_WIDTH, this.topHeight);
+            ctx.strokeRect(this.x, 0, PIPE_WIDTH, this.topHeight);
+            
+            // 下管子
+            ctx.fillRect(this.x, this.bottomY, PIPE_WIDTH, height - this.bottomY);
+            ctx.strokeRect(this.x, this.bottomY, PIPE_WIDTH, height - this.bottomY);
 
-        if (gameState === 'GAMEOVER') {
-            ctx.fillStyle = 'rgba(0,0,0,0.8)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.textAlign = 'center';
-            ctx.font = '24px Arial';
-            ctx.fillText('游戏结束', canvas.width/2, canvas.height/2 - 10);
-            ctx.fillText('得分: ' + score, canvas.width/2, canvas.height/2 + 30);
-            ctx.font = '16px Arial';
-            ctx.fillText('再次点击重试', canvas.width/2, canvas.height/2 + 70);
+            // 管口高光装饰线
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(this.x - 2, this.topHeight - 10, PIPE_WIDTH + 4, 10);
+            ctx.fillRect(this.x - 2, this.bottomY, PIPE_WIDTH + 4, 10);
         }
     }
-    requestAnimationFrame(draw);
-}
 
-draw();
+    class Particle {
+        constructor(x, y, color, isTrail = false) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.size = Math.random() * (isTrail ? 4 : 8) + 2;
+            this.vx = (Math.random() - 0.5) * (isTrail ? 2 : 10);
+            this.vy = (Math.random() - 0.5) * (isTrail ? 2 : 10);
+            this.life = 1;
+            this.decay = Math.random() * 0.02 + 0.02;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.life -= this.decay;
+        }
+        draw() {
+            ctx.globalAlpha = Math.max(0, this.life);
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = this.color;
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    function createParticle(x, y, color, isTrail = false) {
+        particles.push(new Particle(x, y, color, isTrail));
+    }
+
+    // 游戏流程控制
+    function initGame() {
+        player = new Player();
+        pipes = [];
+        particles = [];
+        score = 0;
+        frames = 0;
+        scoreDisplay.innerText = score;
+        
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        hud.classList.remove('opacity-0');
+        
+        gameState = 'PLAYING';
+    }
+
+    function triggerGameOver() {
+        gameState = 'GAMEOVER';
+        hud.classList.add('opacity-0');
+        finalScoreDisplay.innerText = score;
+        gameOverScreen.classList.remove('hidden');
+
+        // 死亡爆炸特效
+        for(let i=0; i<30; i++) {
+            createParticle(player.x, player.y, ['#3b82f6', '#60a5fa', '#fff'][Math.floor(Math.random()*3)]);
+        }
+    }
+
+    // 交互监听
+    function handleInput(e) {
+        if(e.type === 'keydown' && e.code !== 'Space') return;
+        if(e.type !== 'keydown') e.preventDefault();
+
+        if (gameState === 'START') {
+            initGame();
+        } else if (gameState === 'PLAYING') {
+            player.flap();
+        } else if (gameState === 'GAMEOVER') {
+            // 防止死亡瞬间立刻重新开始
+            if(!gameOverScreen.classList.contains('hidden')) return; 
+        }
+    }
+
+    window.addEventListener('keydown', handleInput);
+    window.addEventListener('touchstart', handleInput, {passive: false});
+    window.addEventListener('mousedown', handleInput);
+    startBtn.addEventListener('click', initGame);
+    restartBtn.addEventListener('click', initGame);
+
+    // 绘制赛博网格背景
+    function drawBackground() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+
+        bgOffset = (bgOffset - GAME_SPEED * 0.5) % 40;
+
+        ctx.beginPath();
+        // 竖线
+        for (let x = bgOffset; x < width; x += 40) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+        }
+        // 横线
+        for (let y = 0; y < height; y += 40) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+        }
+        ctx.stroke();
+    }
+
+    // 主循环
+    function loop() {
+        requestAnimationFrame(loop);
+
+        drawBackground();
+
+        if (gameState === 'START') {
+            // 待机动画
+            player = player.x ? player : new Player();
+            player.y = height/2 + Math.sin(Date.now() * 0.003) * 10;
+            player.rotation = 0;
+            player.draw();
+            return;
+        }
+
+        if (gameState === 'PLAYING') {
+            player.update();
+            
+            // 生成管子
+            if (frames % Math.floor(PIPE_SPACING / GAME_SPEED) === 0) {
+                pipes.push(new Pipe());
+            }
+            frames++;
+        }
+
+        // 更新绘制管子
+        for (let i = pipes.length - 1; i >= 0; i--) {
+            if(gameState === 'PLAYING') pipes[i].update();
+            pipes[i].draw();
+            if (pipes[i].x + PIPE_WIDTH < 0) pipes.splice(i, 1);
+        }
+
+        // 更新绘制粒子
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].life <= 0) particles.splice(i, 1);
+        }
+
+        if (gameState === 'PLAYING') {
+            player.draw();
+        }
+    }
+
+    // 启动引擎
+    loop();
 </script>
 </body>
 </html>
