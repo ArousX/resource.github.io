@@ -11,6 +11,7 @@
             font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; 
             background-color: #050505; 
             color: #d1d5db;
+            /* 保留原本的网格背景，代码雨会在它上面流动 */
             background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);
             margin: 0; overflow: hidden; 
         }
@@ -19,12 +20,12 @@
         .window-container {
             width: 100%;
             max-width: 800px;
-            background: rgba(12, 12, 12, 0.95);
+            background: rgba(12, 12, 12, 0.85);
             border: 1px solid #333;
             border-radius: 6px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 20px rgba(59, 130, 246, 0.05);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.15);
             overflow: hidden;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         /* 标题栏 */
@@ -59,7 +60,7 @@
             position: relative;
             min-height: 480px;
             display: flex;
-            flex-col;
+            flex-direction: column;
         }
 
         /* 滑动上升动画 */
@@ -109,6 +110,8 @@
 </head>
 <body class="min-h-screen flex items-center justify-center relative px-4">
     
+    <canvas id="matrix-canvas" class="fixed top-0 left-0 w-full h-full z-0 opacity-40 pointer-events-none"></canvas>
+
     <div class="window-container relative z-10">
         <div class="window-titlebar">
             <div class="window-title">
@@ -129,8 +132,13 @@
             </div>
 
             <div class="anim-slide-up delay-1 flex flex-col items-center w-full mb-8 mt-4">
-                <div class="w-16 h-16 bg-blue-500 flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-                    <span class="text-4xl font-black text-[#050505]">X</span>
+                
+                <div class="w-32 h-32 mb-6 relative flex items-center justify-center text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)]">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%" fill="none" style="overflow: visible;">
+                        <g id="core-group">
+                            <path id="core-path" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" opacity="0.15"></path>
+                        </g>
+                    </svg>
                 </div>
                 <h1 class="text-5xl md:text-6xl font-black text-white mb-2 uppercase tracking-tight">
                     AROUSX<span class="text-blue-500">_CORE</span>
@@ -172,6 +180,58 @@
     </div>
 
     <script>
+        // ========== 1. 背景代码雨 (Matrix Rain) 引擎 ==========
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>?/\\';
+            const fontSize = 14;
+            let columns = Math.floor(canvas.width / fontSize);
+            let drops = [];
+
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * canvas.height; // 随机初始高度，避免一开局像一堵墙
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                columns = Math.floor(canvas.width / fontSize);
+                drops = [];
+                for (let x = 0; x < columns; x++) {
+                    drops[x] = Math.random() * canvas.height;
+                }
+            });
+
+            function drawMatrix() {
+                // 半透明黑色背景，形成尾迹效果
+                ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = fontSize + 'px "JetBrains Mono", monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    
+                    // 随机让一些字符特别亮，其他保持暗蓝色
+                    ctx.fillStyle = Math.random() > 0.95 ? '#60a5fa' : '#1e3a8a';
+                    
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(drawMatrix, 35); // 控制代码雨下落速度
+        }
+
+        // ========== 2. 打字机效果与UI逻辑 ==========
         const lines = [
             "> INITIALIZING RESOURCE INTERFACE...",
             "> 核心资源库已连接。访问权限已授予。",
@@ -180,7 +240,6 @@
         
         const textContainer = document.getElementById('typed-text');
         const cursor = document.getElementById('type-cursor');
-        
         const progSection = document.getElementById('progress-section');
         const progBar = document.getElementById('progress-bar');
         const progPercent = document.getElementById('progress-percent');
@@ -240,13 +299,10 @@
                     setTimeout(decodeEffect, lineDelay);
                 }
             } else {
-                // 打字结束，追加换行和符号，不隐藏光标
                 textContainer.innerHTML += "<br/>> ";
-                
                 progBar.style.width = '100%';
                 progPercent.innerText = '100%';
                 
-                // 定格 400ms 后切换
                 setTimeout(() => {
                     progSection.classList.remove('opacity-100');
                     progSection.classList.add('opacity-0');
@@ -258,8 +314,104 @@
             }
         }
 
+        // ========== 3. Rose Four 核心动画引擎 ==========
+        function initRoseFourAnimation() {
+            const SVG_NS = 'http://www.w3.org/2000/svg';
+            const config = {
+                rotate: true,
+                particleCount: 78,
+                trailSpan: 0.32,
+                durationMs: 5400,
+                rotationDurationMs: 28000,
+                pulseDurationMs: 4500,
+                strokeWidth: 4.6,
+                roseA: 9.2,
+                roseABoost: 0.6,
+                roseBreathBase: 0.72,
+                roseBreathBoost: 0.28,
+                roseScale: 3.25,
+                point(progress, detailScale, config) {
+                    const t = progress * Math.PI * 2;
+                    const a = config.roseA + detailScale * config.roseABoost;
+                    const r = a * (config.roseBreathBase + detailScale * config.roseBreathBoost) * Math.cos(4 * t);
+                    return {
+                        x: 50 + Math.cos(t) * r * config.roseScale,
+                        y: 50 + Math.sin(t) * r * config.roseScale,
+                    };
+                }
+            };
+
+            const group = document.querySelector('#core-group');
+            const path = document.querySelector('#core-path');
+            path.setAttribute('stroke-width', String(config.strokeWidth));
+
+            const particles = Array.from({ length: config.particleCount }, () => {
+                const circle = document.createElementNS(SVG_NS, 'circle');
+                circle.setAttribute('fill', 'currentColor');
+                group.appendChild(circle);
+                return circle;
+            });
+
+            function normalizeProgress(progress) {
+                return ((progress % 1) + 1) % 1;
+            }
+            
+            function getDetailScale(time) {
+                const pulseProgress = (time % config.pulseDurationMs) / config.pulseDurationMs;
+                const pulseAngle = pulseProgress * Math.PI * 2;
+                return 0.52 + ((Math.sin(pulseAngle + 0.55) + 1) / 2) * 0.48;
+            }
+            
+            function getRotation(time) {
+                if (!config.rotate) return 0;
+                return -((time % config.rotationDurationMs) / config.rotationDurationMs) * 360;
+            }
+            
+            function buildPath(detailScale, steps = 480) {
+                return Array.from({ length: steps + 1 }, (_, index) => {
+                    const point = config.point(index / steps, detailScale, config);
+                    return `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`;
+                }).join(' ');
+            }
+            
+            function getParticle(index, progress, detailScale) {
+                const tailOffset = index / (config.particleCount - 1);
+                const point = config.point(normalizeProgress(progress - tailOffset * config.trailSpan), detailScale, config);
+                const fade = Math.pow(1 - tailOffset, 0.56);
+                return {
+                    x: point.x,
+                    y: point.y,
+                    radius: 0.9 + fade * 2.7,
+                    opacity: 0.04 + fade * 0.96,
+                };
+            }
+
+            const startedAt = performance.now();
+            function render(now) {
+                const time = now - startedAt;
+                const progress = (time % config.durationMs) / config.durationMs;
+                const detailScale = getDetailScale(time);
+                
+                group.setAttribute('transform', `rotate(${getRotation(time)} 50 50)`);
+                path.setAttribute('d', buildPath(detailScale));
+                
+                particles.forEach((node, index) => {
+                    const particle = getParticle(index, progress, detailScale);
+                    node.setAttribute('cx', particle.x.toFixed(2));
+                    node.setAttribute('cy', particle.y.toFixed(2));
+                    node.setAttribute('r', particle.radius.toFixed(2));
+                    node.setAttribute('opacity', Math.min(1, particle.opacity + 0.15).toFixed(3));
+                });
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
+        }
+
+        // ========== 4. 初始化所有动画 ==========
         window.onload = () => {
-            setTimeout(decodeEffect, 800);
+            initMatrixRain();         // 启动背景代码雨
+            initRoseFourAnimation();  // 启动核心玫瑰动画
+            setTimeout(decodeEffect, 800); // 启动打字机加载效果
         };
     </script>
 </body>
