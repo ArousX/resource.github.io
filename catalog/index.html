@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源档案 - ArousX_CORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #3b82f6; /* 科技蓝 */
+        }
+
+        body { 
+            font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; 
+            background-color: #050505; 
+            color: #d1d5db;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);
+            margin: 0; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* 全屏顶部状态栏 */
+        .system-topbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e293b;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .system-title {
+            font-size: 13px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.5px;
+        }
+
+        /* macOS 风格红黄绿圆点 */
+        .mac-dots {
+            display: flex;
+            gap: 8px; /* 间距稍微拉开一点更像 Mac */
+            margin-right: 16px;
+        }
+        .mac-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .mac-close { background-color: #ff5f56; border: 1px solid #e0443e; }
+        .mac-min { background-color: #ffbd2e; border: 1px solid #dea123; }
+        .mac-max { background-color: #27c93f; border: 1px solid #1aab29; }
+
+        /* 全屏内容区容器 */
+        .page-wrapper {
+            flex-grow: 1;
+            padding: 3rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 终端数据块卡片 */
+        .tech-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid #1e293b;
+            border-left: 4px solid #334155;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .tech-card:hover {
+            border-left-color: var(--accent);
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), inset 2px 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .tech-card::before {
+            content: ''; 
+            position: absolute; 
+            top: -1px; 
+            right: -1px;
+            border-width: 0 14px 14px 0; 
+            border-style: solid; 
+            border-color: #050505 transparent transparent #050505;
+            transition: border-color 0.2s;
+        }
+        .tech-card:hover::before { 
+            border-color: var(--accent) transparent transparent var(--accent); 
+        }
+
+        /* 动作按钮 */
+        .btn-action { 
+            background: transparent; 
+            color: var(--accent); 
+            border: 1px solid #1e293b; 
+            transition: all 0.2s; 
+        }
+        .btn-action:hover { 
+            background: var(--accent); 
+            color: #050505; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    </style>
+</head>
+<body>
+    
+    <header class="system-topbar">
+        <div class="system-title font-sans">
+            <div class="mac-dots">
+                <div class="mac-dot mac-close"></div>
+                <div class="mac-dot mac-min"></div>
+                <div class="mac-dot mac-max"></div>
+            </div>
+            <span class="font-bold text-slate-300">root@arousx_core:</span> <span class="ml-2 text-slate-500">~/catalog</span>
+        </div>
+        <div class="flex items-center space-x-6 text-xs text-slate-500 font-bold font-mono">
+            <span class="hidden sm:inline-block">UPTIME: 99.9%</span>
+            <span class="text-blue-500">SYS_STATUS: [ OK ]</span>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        
+        <nav class="border-b border-slate-800 pb-5 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+            <div>
+                <div class="text-xs text-blue-500 font-bold tracking-widest mb-2">> DIR / ROOT / CATALOG</div>
+                <div class="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter flex items-center">
+                    <span class="w-2.5 h-8 bg-blue-500 mr-4 inline-block shadow-[0_0_12px_#3b82f6]"></span>
+                    资源档案目录
+                </div>
+            </div>
+            <a href="../index.html" class="text-sm text-slate-500 hover:text-blue-400 transition-colors flex items-center space-x-2 font-bold group pb-1">
+                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span>[ ESC ] 返回主控制台</span>
+            </a>
+        </nav>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 flex-grow">
+            
+            <div class="tech-card p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-5">
+                    <span class="text-xs font-bold px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        CLASS: APP
+                    </span>
+                    <span class="text-slate-600 text-xs font-mono">#001</span>
+                </div>
+                <h3 class="font-black text-white text-xl mb-3 tracking-tight">喵斯计划通解锁</h3>
+                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                    > STATUS: 实时更新<br/>
+                    > INFO: 部署后无需手动更新
+                </div>
+                <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                    <span>> FETCH_DATA</span>
+                </a>
+            </div>
+
+            <div class="tech-card p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-5">
+                    <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        CLASS: TOOL
+                    </span>
+                    <span class="text-slate-600 text-xs font-mono">#002</span>
+                </div>
+                <h3 class="font-black text-white text-xl mb-3 tracking-tight">Mohub 匿名树洞</h3>
+                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                    > STATUS: 模块正常运行<br/>
+                    > INFO: 点击载入留言与倾诉终端
+                </div>
+                <a href="../shudong/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                    <span>> EXECUTE</span>
+                </a>
+            </div>
+
+             <div class="tech-card p-6 flex flex-col">
+                <div class="flex justify-between items-start mb-5">
+                    <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        CLASS: Game
+                    </span>
+                    <span class="text-slate-600 text-xs font-mono">#003</span>
+                </div>
+                <h3 class="font-black text-white text-xl mb-3 tracking-tight">笨鸟先飞</h3>
+                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                    > STATUS: 游戏正常运行<br/>
+                    > GAME: 点击进行游玩
+                </div>
+                <a href="../game/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                    <span>> EXECUTE</span>
+                </a>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-6 border-t border-slate-800/80 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center font-mono gap-4">
+            <span class="opacity-80">ArousX_CORE // SECURE CONNECTION</span>
+            <span class="text-slate-500">© 2026 ArousX Resource Lab. All rights reserved.</span>
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span> DB_SYNC: SUCCESS</span>
+        </footer>
+
+    </div>
+
+</body>
+</html>
