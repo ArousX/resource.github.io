@@ -3,473 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArousX // 资源与工具中枢</title>
+    <title>ArousX // Bento Grid 资源中枢</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --bg-color: #08090d;
-            --surface-color: #0f131c;
-            --card-bg: rgba(18, 22, 34, 0.7);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --card-hover-border: rgba(59, 130, 246, 0.4);
-            --primary-blue: #3b82f6;
-            --primary-indigo: #6366f1;
-            --primary-purple: #a855f7;
-            --primary-cyan: #06b6d4;
-            --primary-emerald: #10b981;
-            --primary-amber: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --text-dim: #64748b;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
-        }
-        .glow-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 0;
-            background: 
-                radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
-                radial-gradient(circle at 85% 55%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
-        }
-        .bg-grid {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0;
-            background-size: 36px 36px;
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        }
-        .container {
-            max-width: 1080px; margin: 0 auto; width: 100%;
-            padding: 0 1.25rem; position: relative; z-index: 10;
-        }
-        .navbar-wrapper {
-            position: sticky; top: 1.25rem; z-index: 50; margin-bottom: 2rem;
-        }
-        .navbar {
-            background: rgba(15, 19, 28, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 9999px;
-            padding: 0.75rem 1.25rem;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-        }
-        .brand-link {
-            display: flex; align-items: center; gap: 0.75rem;
-            text-decoration: none; color: inherit;
-        }
-        .brand-logo {
-            width: 2.25rem; height: 2.25rem; border-radius: 0.75rem;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 1.1rem; color: #fff;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-            transition: transform 0.2s;
-        }
-        .brand-link:hover .brand-logo { transform: scale(1.05); }
-        .brand-info { display: flex; flex-direction: column; }
-        .brand-name { font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; color: #fff; }
-        .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-dim); }
-        .nav-links { display: flex; align-items: center; gap: 0.35rem; }
-        .nav-item {
-            color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;
-            padding: 0.4rem 0.9rem; border-radius: 9999px; transition: all 0.2s;
-        }
-        .nav-item:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
-        .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
-        .status-badge {
-            display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem;
-            border-radius: 9999px; background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.25); color: var(--primary-emerald);
-            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700;
-        }
-        .status-dot {
-            width: 0.45rem; height: 0.45rem; border-radius: 50%;
-            background-color: var(--primary-emerald);
-            box-shadow: 0 0 8px var(--primary-emerald);
-            animation: pulse-dot 2s infinite;
-        }
-        @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
-        .github-btn {
-            color: var(--text-muted); display: flex; align-items: center; justify-content: center;
-            padding: 0.4rem; border-radius: 50%; transition: all 0.2s; text-decoration: none;
-        }
-        .github-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
-        .hero-header {
-            display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;
-        }
-        @media (min-width: 768px) {
-            .hero-header { flex-direction: row; align-items: flex-end; justify-content: space-between; }
-        }
-        .tag-pill {
-            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.85rem;
-            border-radius: 9999px; background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.25); color: var(--primary-blue);
-            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.75rem;
-        }
-        .hero-title {
-            font-size: 2.25rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; color: #fff;
-        }
-        @media (min-width: 768px) { .hero-title { font-size: 3rem; } }
-        .hero-desc {
-            color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-top: 0.5rem; max-width: 34rem;
-        }
-        .telemetry-pills {
-            display: flex; align-items: center; gap: 0.6rem;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted);
-        }
-        .telemetry-item {
-            padding: 0.4rem 0.8rem; background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border); border-radius: 0.75rem;
-        }
-        .bento-grid {
-            display: grid; grid-template-columns: 1fr; gap: 1rem;
-        }
-        @media (min-width: 640px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .bento-grid { grid-template-columns: repeat(4, 1fr); } }
-        .bento-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 1.5rem; padding: 1.75rem;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; flex-direction: column; justify-content: space-between;
-            position: relative; overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-height: 12rem;
-        }
-        .bento-card:hover {
-            transform: translateY(-4px); border-color: var(--card-hover-border);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 30px -5px rgba(59, 130, 246, 0.18);
-        }
-        .bento-card::before {
-            content: ''; position: absolute;
-            top: var(--mouse-y, -1000px); left: var(--mouse-x, -1000px);
-            width: 450px; height: 450px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(99, 102, 241, 0.04) 45%, transparent 70%);
-            transform: translate(-50%, -50%); pointer-events: none; opacity: 0;
-            transition: opacity 0.3s; z-index: 1;
-        }
-        .bento-card:hover::before { opacity: 1; }
-        .card-content { position: relative; z-index: 2; }
-        @media (min-width: 1024px) {
-            .col-span-2 { grid-column: span 2 / span 2; }
-            .row-span-2 { grid-row: span 2 / span 2; }
-        }
-        .icon-box {
-            width: 3rem; height: 3rem; border-radius: 1rem;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 1.25rem; transition: transform 0.2s;
-        }
-        .icon-box.blue { background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25); color: var(--primary-blue); }
-        .icon-box.emerald { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); color: var(--primary-emerald); }
-        .icon-box.amber { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); color: var(--primary-amber); }
-        .icon-box.purple { background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.25); color: var(--primary-purple); }
-        .icon-box.cyan { background: rgba(6, 182, 212, 0.12); border: 1px solid rgba(6, 182, 212, 0.25); color: var(--primary-cyan); }
-        .bento-card:hover .icon-box { transform: scale(1.08); }
-        .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-        .card-category { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-        .card-id { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-dim); }
-        .card-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; color: #fff; margin-bottom: 0.5rem; line-height: 1.3; }
-        .card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; }
-        .chip-group { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
-        .chip {
-            padding: 0.25rem 0.65rem; border-radius: 0.5rem; font-size: 0.72rem;
-            font-family: 'JetBrains Mono', monospace; font-weight: 600;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border); color: var(--text-muted);
-        }
-        .chip.active { background: rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); color: #93c5fd; }
-        .btn-primary {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            background: linear-gradient(135deg, var(--primary-blue), #2563eb); color: #fff;
-            font-weight: 700; font-size: 0.85rem; padding: 0.65rem 1.25rem; border-radius: 0.85rem;
-            text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
-        .btn-secondary {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
-            color: var(--text-main); font-weight: 600; font-size: 0.8rem; padding: 0.6rem 1rem;
-            border-radius: 0.75rem; text-decoration: none; transition: all 0.2s;
-        }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: #fff; }
-        .card-footer {
-            margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2;
-        }
-        .code-pill {
-            display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.6rem;
-            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(168, 85, 247, 0.3);
-            border-radius: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
-            font-weight: 700; color: #d8b4fe; user-select: all;
-        }
-        .copy-icon-btn {
-            background: transparent; border: none; color: var(--text-muted);
-            cursor: pointer; display: flex; align-items: center; padding: 0.2rem;
-            border-radius: 0.3rem; transition: color 0.2s;
-        }
-        .copy-icon-btn:hover { color: #fff; }
-        .footer {
-            margin-top: 3.5rem; padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-dim);
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            gap: 1rem; z-index: 10;
-        }
-        @media (min-width: 640px) { .footer { flex-direction: row; } }
-        .footer-links { display: flex; gap: 1.5rem; }
-        .footer-link { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
-        .footer-link:hover { color: var(--primary-blue); }
-        .toast {
-            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px);
-            border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
-            padding: 0.65rem 1.25rem; border-radius: 1rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8); display: none; align-items: center; gap: 0.5rem;
-        }
-        @media (max-width: 640px) { .nav-links { display: none; } }
-    </style>
+    <link rel="stylesheet" href="./bento_style.css">
 </head>
 <body>
-    <div class="glow-bg"></div>
-    <div class="bg-grid"></div>
+    <div class="ambient-glow"></div>
+    <div class="grid-overlay"></div>
+
     <div class="container">
-        <header class="navbar-wrapper">
-            <nav class="navbar">
-                <a href="./" class="brand-link">
-                    <div class="brand-logo">A</div>
-                    <div class="brand-info">
-                        <span class="brand-name">ArousX_CORE</span>
-                        <span class="brand-sub">mohub.online</span>
-                    </div>
-                </a>
-                <div class="nav-links">
-                    <a href="./catalog/" class="nav-item">资源目录</a>
-                    <a href="./shudong/" class="nav-item">匿名树洞</a>
-                    <a href="./game/" class="nav-item">飞行小游戏</a>
-                </div>
-                <div class="nav-actions">
-                    <div class="status-badge">
-                        <span class="status-dot"></span>
-                        <span>ONLINE</span>
-                    </div>
-                    <a href="https://github.com/ArousX/resource.github.io" target="_blank" class="github-btn" title="GitHub Repository">
-                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
-                    </a>
-                </div>
-            </nav>
+        <!-- 浮动胶囊导航 -->
+        <header class="navbar">
+            <a href="./" class="brand">
+                <div class="brand-icon">A</div>
+                <div class="brand-name">ArousX_CORE</div>
+            </a>
+            <div class="nav-menu">
+                <a href="./catalog/" class="nav-link">资源档案</a>
+                <a href="./shudong/" class="nav-link">匿名树洞</a>
+                <a href="./game/" class="nav-link">飞行游戏</a>
+            </div>
+            <div class="nav-badge">
+                <span class="dot"></span>
+                <span>mohub.online</span>
+            </div>
         </header>
 
+        <!-- 标头区域 -->
         <section class="hero-header">
-            <div>
-                <div class="tag-pill">
-                    <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-blue);"></span>
-                    <span>NEXT-GEN HUB // 便当盒架构</span>
-                </div>
-                <h1 class="hero-title">汇聚资源、工具与灵感。</h1>
-                <p class="hero-desc">
-                    欢迎来到 ArousX 个人多功能控制台。探索经过精心整理的云端资源、匿名互动终端与轻量极客应用。
-                </p>
+            <div class="hero-pill">
+                <span>🍱 BENTO GRID 架构 // 全新视觉</span>
             </div>
-            <div class="telemetry-pills">
-                <div class="telemetry-item"><span id="current-time">00:00:00</span></div>
-                <div class="telemetry-item" style="color: var(--primary-blue);">LATENCY: <span id="ping-text">~14ms</span></div>
-            </div>
+            <h1 class="hero-title">汇聚资源、工具与极客应用</h1>
+            <p class="hero-subtitle">便当盒模块化设计，清晰整合云端资源档案、匿名心声终端与敏捷实验工具。</p>
         </section>
 
+        <!-- ================= 12 列 BENTO GRID 便当盒 ================= -->
         <main class="bento-grid">
-            <!-- 卡片 1: 核心资源档案总览 -->
-            <div class="bento-card col-span-2 row-span-2">
-                <div class="card-content">
-                    <div class="icon-box blue">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+
+            <!-- 卡片 1: 核心档案总览 (大卡片: 8列宽 x 2行高) -->
+            <div class="bento-box col-8 row-2">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill indigo">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.72rem; font-weight: 800; color: #818cf8; letter-spacing: 0.05em;">MODULE / 01 · CENTRAL REPOSITORY</span>
+                            <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-dim);">3 ACTIVE ITEMS</span>
+                        </div>
+                        <h2 class="box-title" style="font-size: 1.8rem;">核心资源档案库</h2>
+                        <p class="box-desc">聚合实用工具、破解资源与独立应用，支持分类检索与极速响应。</p>
+
+                        <!-- 内嵌可视化卡片列表 -->
+                        <div class="mockup-preview-stack">
+                            <div class="mockup-row">
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span style="color: #c084fc;">📦</span>
+                                    <span style="font-weight: 600; color: #fff;">喵斯计划通全解锁</span>
+                                </div>
+                                <span style="font-family: 'JetBrains Mono'; color: #94a3b8; font-size: 0.72rem;">夸克网盘 · 提取码直通</span>
+                            </div>
+                            <div class="mockup-row">
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span style="color: #34d399;">💬</span>
+                                    <span style="font-weight: 600; color: #fff;">Mohub 匿名树洞</span>
+                                </div>
+                                <span style="font-family: 'JetBrains Mono'; color: #34d399; font-size: 0.72rem;">🟢 互动服务运行中</span>
+                            </div>
+                            <div class="mockup-row">
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span style="color: #fbbf24;">🎮</span>
+                                    <span style="font-weight: 600; color: #fff;">笨鸟先飞飞行小游戏</span>
+                                </div>
+                                <span style="font-family: 'JetBrains Mono'; color: #fbbf24; font-size: 0.72rem;">⚡ HTML5 即点即玩</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-meta">
-                        <span class="card-category" style="color: var(--primary-blue);">CENTRAL ARCHIVE</span>
-                        <span class="card-id">MODULE / 01</span>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem;">
+                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">自适应瀑布流展示</span>
+                        <a href="./catalog/" class="btn-primary">
+                            <span>探索完整资源目录</span>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
                     </div>
-                    <h2 class="card-title" style="font-size: 1.75rem;">资源档案目录</h2>
-                    <p class="card-desc">
-                        收录整理各类实用生产力工具、游戏资源与便捷扩展，支持自适应瀑布流展示与即时分类检索。
-                    </p>
-                    <div class="chip-group">
-                        <span class="chip active">喵斯解锁</span>
-                        <span class="chip active">匿名树洞</span>
-                        <span class="chip active">敏捷游戏</span>
-                        <span class="chip">+ 持续收录中</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">STATUS: 实时更新</span>
-                    <a href="./catalog/" class="btn-primary">
-                        <span>进入完整目录</span>
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
                 </div>
             </div>
 
-            <!-- 卡片 2: Mohub 匿名树洞 -->
-            <div class="bento-card">
-                <div class="card-content">
-                    <div class="icon-box emerald">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <!-- 卡片 2: 匿名树洞 (4列宽 x 2行高) -->
+            <div class="bento-box col-4 row-2">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill emerald">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        </div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #34d399; margin-bottom: 0.4rem;">TOOL #002</div>
+                        <h3 class="box-title">Mohub 匿名树洞</h3>
+                        <p class="box-desc">安全保密的匿名留言终端，记录心声与倾诉。</p>
+
+                        <!-- 内嵌模拟气泡组件 -->
+                        <div class="mockup-chat-bubble">
+                            <span style="font-size: 0.7rem; color: #6ee7b7; font-family: 'JetBrains Mono';">匿名访客 · 刚刚</span>
+                            <span>“把想说的留在树洞里，总有人会默默听见...”</span>
+                        </div>
                     </div>
-                    <div class="card-meta">
-                        <span class="card-category" style="color: var(--primary-emerald);">TOOL</span>
-                        <span class="card-id">#002</span>
-                    </div>
-                    <h3 class="card-title">Mohub 匿名树洞</h3>
-                    <p class="card-desc">安全的匿名倾诉与留言交互终端，记录每一次心声。</p>
-                </div>
-                <div class="card-footer" style="border: none; padding-top: 0;">
-                    <a href="./shudong/" class="btn-secondary">
-                        <span>打开树洞终端</span>
+
+                    <a href="./shudong/" class="btn-sub">
+                        <span>进入树洞终端</span>
                         <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
                 </div>
             </div>
 
-            <!-- 卡片 3: 飞行穿梭小游戏 -->
-            <div class="bento-card">
-                <div class="card-content">
-                    <div class="icon-box amber">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <!-- 卡片 3: 精选夸克网盘资源 (8列宽 x 1行高) -->
+            <div class="bento-box col-8">
+                <div class="box-inner">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.6rem; border-radius: 0.4rem; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">
+                                🔥 精选推荐 · 夸克网盘
+                            </div>
+                            <h3 class="box-title">喵斯计划通全解锁</h3>
+                            <p class="box-desc">全DLC全曲包解锁支持，高速通道一键转存下载。</p>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">提取码:</span>
+                                <div class="code-pill">jnt6</div>
+                                <button onclick="copyPassword('jnt6')" class="copy-btn" title="复制">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                </button>
+                            </div>
+                            <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-primary" style="background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
+                                <span>转存下载</span>
+                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-meta">
-                        <span class="card-category" style="color: var(--primary-amber);">GAME</span>
-                        <span class="card-id">#003</span>
-                    </div>
-                    <h3 class="card-title">笨鸟先飞 // 飞行穿梭</h3>
-                    <p class="card-desc">基于 HTML5 Canvas 的经典躲避小游戏，随时开启一局。</p>
                 </div>
-                <div class="card-footer" style="border: none; padding-top: 0;">
-                    <a href="./game/" class="btn-secondary">
-                        <span>即刻开始游玩</span>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+
+            <!-- 卡片 4: 敏捷小游戏 (4列宽 x 1行高) -->
+            <div class="bento-box col-4">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill amber">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #fbbf24; margin-bottom: 0.4rem;">GAME #003</div>
+                        <h3 class="box-title">飞行穿梭小游戏</h3>
+                        <p class="box-desc">HTML5 Canvas 原生避障挑战，考验敏捷手速。</p>
+                    </div>
+
+                    <a href="./game/" class="btn-sub" style="margin-top: 1rem;">
+                        <span>即刻开玩 🎮</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 卡片 4: 精选资源 - 喵斯计划通 -->
-            <div class="bento-card col-span-2">
-                <div class="card-content">
-                    <div class="card-meta">
-                        <span class="card-category" style="color: var(--primary-purple); background: rgba(168, 85, 247, 0.1); padding: 0.2rem 0.5rem; border-radius: 0.4rem; border: 1px solid rgba(168, 85, 247, 0.25);">
-                            🔥 FEATURED RESOURCE
-                        </span>
-                        <span class="card-id">QUARK CLOUD</span>
+            <!-- 卡片 5: 全球网络部署 (4列宽 x 1行高) -->
+            <div class="bento-box col-4">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill cyan">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                        </div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #22d3ee; margin-bottom: 0.4rem;">NETWORK EDGE</div>
+                        <h3 class="box-title">全球网络节点</h3>
+                        <div style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.6rem;">
+                            <div style="display: flex; justify-content: space-between;"><span>DOM:</span><span style="color: #22d3ee;">mohub.online</span></div>
+                            <div style="display: flex; justify-content: space-between;"><span>SSL:</span><span style="color: #34d399;">TLS 1.3 ACTIVE</span></div>
+                            <div style="display: flex; justify-content: space-between;"><span>PING:</span><span style="color: #fff;">~14ms</span></div>
+                        </div>
                     </div>
-                    <h3 class="card-title">喵斯计划通全解锁</h3>
-                    <p class="card-desc">云端一键转存下载，包含最新稳定更新包，最新补丁直连通道。</p>
                 </div>
-                <div class="card-footer" style="flex-wrap: wrap; gap: 0.75rem;">
-                    <div style="display: flex; align-items: center; gap: 0.4rem;">
-                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">提取码:</span>
-                        <div class="code-pill">jnt6</div>
-                        <button onclick="copyPassword('jnt6')" class="copy-icon-btn" title="复制提取码">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
+            </div>
+
+            <!-- 卡片 6: 开源贡献 (4列宽 x 1行高) -->
+            <div class="bento-box col-4">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill" style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: #fff;">
+                            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+                        </div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">GITHUB REPO</div>
+                        <h3 class="box-title">开源与代码</h3>
+                        <p class="box-desc">GitHub 开源归档，欢迎 Star 或提交 PR 贡献。</p>
                     </div>
-                    <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-primary" style="background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">
-                        <span>转存与下载</span>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    <a href="https://github.com/ArousX/resource.github.io" target="_blank" class="btn-sub" style="margin-top: 1rem;">
+                        <span>访问 GitHub 源码</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 卡片 5: 全球节点状态 -->
-            <div class="bento-card">
-                <div class="card-content">
-                    <div class="icon-box cyan">
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            <!-- 卡片 7: 实时时钟与会话 (4列宽 x 1行高) -->
+            <div class="bento-box col-4">
+                <div class="box-inner">
+                    <div>
+                        <div class="icon-pill" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); color: #818cf8;">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #818cf8; margin-bottom: 0.4rem;">SYSTEM CLOCK</div>
+                        <h3 class="box-title" id="live-clock" style="font-family: 'JetBrains Mono'; font-size: 1.6rem;">00:00:00</h3>
+                        <p class="box-desc" style="font-family: 'JetBrains Mono'; font-size: 0.75rem;">LOCAL SESSION ACTIVE</p>
                     </div>
-                    <div class="card-meta">
-                        <span class="card-category" style="color: var(--primary-cyan);">NETWORK</span>
-                        <span class="card-id">EDGE</span>
-                    </div>
-                    <h3 class="card-title" style="font-size: 1.15rem;">全球网络部署</h3>
-                    <div style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.5rem;">
-                        <div style="display: flex; justify-content: space-between;"><span>HOST:</span><span style="color: #fff;">GitHub Pages</span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>DOMAIN:</span><span style="color: var(--primary-cyan);">mohub.online</span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>SSL:</span><span style="color: var(--primary-emerald);">TLS 1.3 ACTIVE</span></div>
-                    </div>
-                </div>
-                <div class="card-footer" style="border: none; padding-top: 0.5rem;">
-                    <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-dim);">99.99% Uptime</span>
-                    <span class="status-dot"></span>
                 </div>
             </div>
 
-            <!-- 卡片 6: 开源贡献 -->
-            <div class="bento-card">
-                <div class="card-content">
-                    <div class="icon-box" style="background: rgba(255, 255, 255, 0.06); border: 1px solid var(--card-border); color: #fff;">
-                        <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
-                    </div>
-                    <div class="card-meta">
-                        <span class="card-category" style="color: #fff;">GITHUB</span>
-                        <span class="card-id">SOURCE</span>
-                    </div>
-                    <h3 class="card-title">开源与贡献</h3>
-                    <p class="card-desc">欢迎 Star 关注仓库或提交 Pull Request 共同扩展功能。</p>
-                </div>
-                <div class="card-footer" style="border: none; padding-top: 0;">
-                    <a href="https://github.com/ArousX/resource.github.io" target="_blank" class="btn-secondary">
-                        <span>访问仓库源码</span>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                    </a>
-                </div>
-            </div>
         </main>
 
+        <!-- 底部 -->
         <footer class="footer">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-blue);"></span>
-                <span>ArousX_CORE © 2026</span>
+                <span class="dot"></span>
+                <span>ArousX_CORE © 2026 · Bento Grid Edition</span>
             </div>
-            <div class="footer-links">
-                <a href="./catalog/" class="footer-link">Catalog</a>
-                <a href="./shudong/" class="footer-link">Shudong</a>
-                <a href="./game/" class="footer-link">Game</a>
-                <a href="https://mohub.online" class="footer-link">mohub.online</a>
+            <div>
+                <a href="https://mohub.online" style="color: var(--text-muted); text-decoration: none;">mohub.online</a>
             </div>
         </footer>
     </div>
 
+    <!-- 复制 Toast -->
     <div id="toast" class="toast">
-        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--primary-emerald);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span id="toast-msg">已复制提取码到剪贴板！</span>
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #34d399;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg">已复制提取码！</span>
     </div>
 
     <script>
-        document.querySelectorAll('.bento-card').forEach(card => {
+        // 鼠标聚光灯
+        document.querySelectorAll('.bento-box').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', x + 'px');
-                card.style.setProperty('--mouse-y', y + 'px');
+                card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
             });
         });
+
+        // 实时时钟
         function updateClock() {
             const now = new Date();
             const timeStr = now.toTimeString().split(' ')[0];
-            const el = document.getElementById('current-time');
+            const el = document.getElementById('live-clock');
             if (el) el.innerText = timeStr;
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // 复制提取码
         function copyPassword(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
