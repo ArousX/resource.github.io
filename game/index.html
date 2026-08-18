@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ArousX_CORE // 飞行穿梭</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ArousX_CORE // 飞行穿梭 · Magic UI</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
             --primary: #3b82f6;
             --primary-glow: #60a5fa;
@@ -18,7 +18,8 @@
         body {
             margin: 0; padding: 0;
             font-family: 'JetBrains Mono', 'Noto Sans SC', monospace;
-            background: #050505;
+            background: #000000;
+            color: #fafafa;
             overflow: hidden;
             touch-action: none;
             user-select: none;
@@ -37,28 +38,28 @@
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(59, 130, 246, 0.08);
+            background: #09090b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 -20px 80px -20px rgba(255, 255, 255, 0.12) inset, 0 20px 50px rgba(0,0,0,0.8);
+            border-radius: 1rem;
         }
 
         .btn-tech {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            transition: all 0.25s;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 700;
+            border: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
         }
-        .btn-tech:hover, .btn-tech:active {
-            background: var(--primary);
-            color: #050505;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
-            transform: scale(1.02);
+        .btn-tech:hover {
+            background: #e4e4e7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
         }
 
-        /* UI 淡入动画 */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -67,93 +68,103 @@
 
         .animate-fade-in { animation: fadeInUp 0.4s ease-out; }
         .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
     </style>
 </head>
-<body class="relative text-slate-200">
+<body style="position: relative;">
 
     <canvas id="gameCanvas"></canvas>
 
     <!-- HUD -->
-    <div id="hud" class="absolute top-0 left-0 w-full p-4 md:p-6 flex justify-between items-start pointer-events-none z-10 opacity-0 transition-opacity duration-300">
-        <div class="text-[10px] md:text-xs font-bold text-blue-500 tracking-widest space-y-0.5">
-            <div>> SYS: <span class="text-white">ACTIVE</span></div>
-            <div>> LVL: <span id="levelDisplay" class="text-cyan">1</span></div>
-            <div id="shieldIndicator" class="text-yellow-400 hidden">> SHIELD: <span class="text-yellow-300">ON</span></div>
-            <div id="comboIndicator" class="text-orange-400 hidden">> COMBO: <span id="comboCount" class="text-orange-300">x1</span></div>
+    <div id="hud" style="position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; z-index: 10; opacity: 0; transition: opacity 0.3s;">
+        <div style="font-size: 0.75rem; font-weight: 700; color: #3b82f6; letter-spacing: 0.05em; display: flex; flex-direction: column; gap: 0.25rem;">
+            <div>> SYS: <span style="color: #fff;">ACTIVE</span></div>
+            <div>> LVL: <span id="levelDisplay" style="color: #22d3ee;">1</span></div>
+            <div id="shieldIndicator" style="color: #facc15; display: none;">> SHIELD: <span style="color: #fde047;">ON</span></div>
+            <div id="comboIndicator" style="color: #fb923c; display: none;">> COMBO: <span id="comboCount" style="color: #fdba74;">x1</span></div>
         </div>
-        <div class="text-right">
-            <div class="text-[10px] md:text-xs text-blue-500 tracking-widest mb-1">> SCORE</div>
-            <div id="scoreDisplay" class="text-4xl md:text-5xl font-black neon-text transition-all duration-150">0</div>
-            <div id="bestDisplay" class="text-[10px] md:text-xs text-slate-500 mt-1 tracking-widest">
-                > BEST: <span id="bestScore" class="text-yellow-400">0</span>
+        <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: #3b82f6; letter-spacing: 0.05em; margin-bottom: 0.25rem;">> SCORE</div>
+            <div id="scoreDisplay" class="neon-text" style="font-size: 2.75rem; font-weight: 900; line-height: 1;">0</div>
+            <div id="bestDisplay" style="font-size: 0.72rem; color: #71717a; margin-top: 0.25rem;">
+                > BEST: <span id="bestScore" style="color: #facc15;">0</span>
             </div>
         </div>
     </div>
 
     <!-- 暂停提示 -->
-    <div id="pauseOverlay" class="absolute inset-0 flex items-center justify-center z-25 hidden pointer-events-none">
-        <div class="glass-panel px-8 py-4 rounded-lg animate-fade-in">
-            <span class="text-xl font-black text-white tracking-widest">⏸ PAUSED</span>
+    <div id="pauseOverlay" class="modal-overlay" style="display: none; pointer-events: none; z-index: 25;">
+        <div class="glass-panel" style="padding: 1rem 2rem;">
+            <span style="font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: 0.1em;">⏸ PAUSED</span>
         </div>
     </div>
 
     <!-- 开始界面 -->
-    <div id="startScreen" class="absolute inset-0 flex items-center justify-center z-20">
-        <div class="glass-panel p-6 md:p-8 rounded-lg flex flex-col items-center max-w-sm w-11/12 border-l-4 border-l-blue-500 animate-fade-in">
-            <div class="w-12 h-12 bg-blue-500 mb-4 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                <span class="text-2xl font-black text-[#050505]">X</span>
+    <div id="startScreen" class="modal-overlay">
+        <div class="glass-panel animate-fade-in" style="padding: 2rem; display: flex; flex-direction: column; align-items: center; max-width: 22rem; width: 90%; text-align: center;">
+            <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 0.75rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);">
+                <span style="font-size: 1.5rem; font-weight: 900; color: #fff;">X</span>
             </div>
-            <h1 class="text-xl md:text-2xl font-black text-white mb-1 tracking-tight">AROUSX<span class="text-blue-500">_FLIGHT</span></h1>
-            <p class="text-[10px] md:text-xs text-slate-400 mb-6 font-mono tracking-widest uppercase">> 终端闪避协议 v2.0</p>
+            <h1 style="font-size: 1.5rem; font-weight: 900; color: #fff; margin-bottom: 0.25rem;">AROUSX<span style="color: #3b82f6;">_FLIGHT</span></h1>
+            <p style="font-size: 0.72rem; color: #a1a1aa; font-family: 'JetBrains Mono'; margin-bottom: 1.5rem;">> 终端敏捷穿梭协议 v2.0</p>
 
-            <div class="text-xs md:text-sm text-slate-300 mb-6 text-center leading-relaxed space-y-1">
-                <p>🖱 点击 / 空格键 → 推进</p>
+            <div style="font-size: 0.82rem; color: #d4d4d8; line-height: 1.8; margin-bottom: 1.5rem;">
+                <p>🖱 点击 / 空格键 → 推进飞船</p>
                 <p>🛡 收集蓝色护盾 → 无敌状态</p>
-                <p>⭐ 收集金色核心 → 额外加分</p>
-                <p>⏸ 按 [P] 键 → 暂停</p>
+                <p>⭐ 收集金色核心 → 额外积分</p>
+                <p>⏸ 按 [P] 键 → 随时暂停</p>
             </div>
 
-            <div id="highScorePreview" class="text-xs text-slate-500 mb-4 tracking-widest hidden">
-                > 历史最高: <span id="hsPreview" class="text-yellow-400">0</span>
+            <div id="highScorePreview" style="font-size: 0.75rem; color: #71717a; margin-bottom: 1rem; display: none;">
+                > 历史最高分: <span id="hsPreview" style="color: #facc15; font-weight: 700;">0</span>
             </div>
 
-            <button id="startBtn" class="btn-tech w-full py-3 font-bold tracking-widest uppercase text-sm">
-                > INITIALIZE [开始]
+            <button id="startBtn" class="btn-tech" style="width: 100%; padding: 0.75rem; font-size: 0.85rem; letter-spacing: 0.05em;">
+                > INITIALIZE [开始游戏]
             </button>
-            <a href="../catalog/" class="mt-4 text-xs text-slate-500 hover:text-blue-400 transition-colors tracking-widest">
+            <a href="../catalog/" style="margin-top: 1rem; font-size: 0.75rem; color: #71717a; text-decoration: none; transition: color 0.2s;">
                 [ ESC ] 返回档案目录
             </a>
         </div>
     </div>
 
     <!-- 结束界面 -->
-    <div id="gameOverScreen" class="absolute inset-0 flex items-center justify-center z-30 hidden">
-        <div class="glass-panel p-6 md:p-8 rounded-lg flex flex-col items-center max-w-sm w-11/12 border-l-4 border-l-red-500 animate-fade-in">
-            <h2 class="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight" style="text-shadow: 0 0 10px #ef4444;">CRITICAL_HIT</h2>
-            <p class="text-xs text-red-400 mb-4 font-mono tracking-widest uppercase">> 系统连接中断</p>
+    <div id="gameOverScreen" class="modal-overlay" style="display: none; z-index: 30;">
+        <div class="glass-panel animate-fade-in" style="padding: 2rem; display: flex; flex-direction: column; align-items: center; max-width: 22rem; width: 90%; text-align: center;">
+            <h2 style="font-size: 1.75rem; font-weight: 900; color: #ef4444; margin-bottom: 0.25rem; text-shadow: 0 0 15px rgba(239, 68, 68, 0.6);">CRITICAL_HIT</h2>
+            <p style="font-size: 0.75rem; color: #f87171; font-family: 'JetBrains Mono'; margin-bottom: 1rem;">> 系统连接中断</p>
 
-            <div class="bg-slate-900/50 w-full p-4 rounded border border-slate-700 text-center mb-3">
-                <div class="text-xs text-slate-500 tracking-widest mb-1">FINAL_SCORE</div>
-                <div id="finalScore" class="text-4xl font-black text-white">0</div>
+            <div style="background: rgba(255, 255, 255, 0.04); width: 100%; padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.75rem;">
+                <div style="font-size: 0.72rem; color: #71717a; margin-bottom: 0.25rem;">FINAL_SCORE</div>
+                <div id="finalScore" style="font-size: 2.25rem; font-weight: 900; color: #fff;">0</div>
             </div>
 
-            <div id="newRecordBadge" class="bg-yellow-500/20 border border-yellow-500/50 rounded px-3 py-1 mb-4 hidden">
-                <span class="text-xs text-yellow-400 font-bold tracking-widest">🏆 NEW RECORD!</span>
+            <div id="newRecordBadge" style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.4rem; padding: 0.25rem 0.75rem; margin-bottom: 1rem; display: none;">
+                <span style="font-size: 0.75rem; color: #facc15; font-weight: 700;">🏆 NEW RECORD!</span>
             </div>
 
-            <div class="bg-slate-900/30 w-full p-3 rounded border border-slate-700/50 text-center mb-5">
-                <div class="text-[10px] text-slate-500 tracking-widest mb-1">STATS</div>
-                <div class="flex justify-around text-xs text-slate-400">
-                    <span>最高连击: <span id="maxComboStat" class="text-orange-400">0</span></span>
-                    <span>收集: <span id="collectStat" class="text-yellow-400">0</span></span>
+            <div style="background: rgba(255, 255, 255, 0.02); width: 100%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(255, 255, 255, 0.06); margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-around; font-size: 0.78rem; color: #a1a1aa;">
+                    <span>最高连击: <span id="maxComboStat" style="color: #fb923c; font-weight: 700;">0</span></span>
+                    <span>收集核心: <span id="collectStat" style="color: #facc15; font-weight: 700;">0</span></span>
                 </div>
             </div>
 
-            <button id="restartBtn" class="btn-tech w-full py-3 font-bold tracking-widest uppercase text-sm">
-                > REBOOT [重试]
+            <button id="restartBtn" class="btn-tech" style="width: 100%; padding: 0.75rem; font-size: 0.85rem;">
+                > REBOOT [再次挑战]
             </button>
-            <a href="../catalog/" class="mt-4 text-xs text-slate-500 hover:text-blue-400 transition-colors tracking-widest">
-                [ ESC ] 断开连接
+            <a href="../catalog/" style="margin-top: 1rem; font-size: 0.75rem; color: #71717a; text-decoration: none;">
+                [ ESC ] 返回档案目录
             </a>
         </div>
     </div>
