@@ -1,156 +1,113 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+﻿<!DOCTYPE html>
+<html lang=zh-CN class=dark>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资源档案 - ArousX_CORE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+    <meta charset=UTF-8>
+    <meta name=viewport content=width=device-width, initial-scale=1.0>
+    <title>资源档案库 - ArousX_CORE</title>
+    <script src=https://cdn.tailwindcss.com></script>
+    <link rel=preconnect href=https://fonts.googleapis.com>
+    <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+    <link href=https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap rel=stylesheet>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Noto Sans SC', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        dark: {
+                            bg: '#08090d',
+                            surface: '#0f1219',
+                            card: '#131722',
+                            border: '#1f2638',
+                        },
+                        brand: {
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                            indigo: '#6366f1',
+                            purple: '#a855f7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --accent: #3b82f6; /* 科技蓝 */
-        }
-
-        body { 
-            font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; 
-            background-color: #050505; 
-            color: #d1d5db;
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);
-            margin: 0; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        body {
+            background-color: #08090d;
+            color: #f1f5f9;
             overflow-x: hidden;
+            font-feature-settings: cv02, cv03, cv04, cv11;
         }
 
-        /* 全屏顶部状态栏 */
-        .system-topbar {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            padding: 12px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1e293b;
-            position: sticky;
+        /* 弥散光晕背景 */
+        .glow-bg {
+            position: fixed;
             top: 0;
-            z-index: 50;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 15% 65%, rgba(168, 85, 247, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
         }
 
-        .system-title {
-            font-size: 13px;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            letter-spacing: 0.5px;
+        .bg-grid {
+            background-size: 32px 32px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
 
-        /* macOS 风格红黄绿圆点 */
-        .mac-dots {
-            display: flex;
-            gap: 8px; /* 间距稍微拉开一点更像 Mac */
-            margin-right: 16px;
-        }
-        .mac-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .mac-close { background-color: #ff5f56; border: 1px solid #e0443e; }
-        .mac-min { background-color: #ffbd2e; border: 1px solid #dea123; }
-        .mac-max { background-color: #27c93f; border: 1px solid #1aab29; }
-
-        /* 全屏内容区容器 */
-        .page-wrapper {
-            flex-grow: 1;
-            padding: 3rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 瀑布流布局系统 (Masonry Layout) */
-        .masonry-container {
-            column-count: 1;
-            column-gap: 1.5rem;
-            width: 100%;
-        }
-        @media (min-width: 640px) {
-            .masonry-container {
-                column-count: 2;
-            }
-        }
-        @media (min-width: 1024px) {
-            .masonry-container {
-                column-count: 3;
-            }
-        }
-        @media (min-width: 1280px) {
-            .masonry-container {
-                column-count: 4;
-            }
-        }
-
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            width: 100%;
-        }
-
-        /* 终端数据块卡片 */
-        .tech-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid #1e293b;
-            border-left: 4px solid #334155;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        /* 便当盒卡片 */
+        .bento-card {
+            background: rgba(19, 23, 34, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 1.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
-        }
-        
-        .tech-card:hover {
-            border-left-color: var(--accent);
-            background: rgba(15, 23, 42, 0.8);
-            transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), inset 2px 0 15px rgba(59, 130, 246, 0.1);
+            overflow: hidden;
         }
 
-        .tech-card::before {
-            content: ''; 
-            position: absolute; 
-            top: -1px; 
-            right: -1px;
-            border-width: 0 14px 14px 0; 
-            border-style: solid; 
-            border-color: #050505 transparent transparent #050505;
-            transition: border-color 0.2s;
-        }
-        .tech-card:hover::before { 
-            border-color: var(--accent) transparent transparent var(--accent); 
+        .bento-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.35);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px -10px rgba(59, 130, 246, 0.15);
         }
 
-        /* 动作按钮 */
-        .btn-action { 
-            background: transparent; 
-            color: var(--accent); 
-            border: 1px solid #1e293b; 
-            transition: all 0.2s; 
-        }
-        .btn-action:hover { 
-            background: var(--accent); 
-            color: #050505; 
-            border-color: var(--accent); 
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: var(--mouse-y, -1000px);
+            left: var(--mouse-x, -1000px);
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
         }
 
-        /* 骨架屏样式与动画 */
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 骨架屏扫描动画 */
         .skeleton-block {
             background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.7) 50%, rgba(30, 41, 59, 0.4) 100%);
             background-size: 200% 100%;
-            animation: skeleton-shimmer 1.5s infinite ease-in-out;
-            border-radius: 2px;
+            animation: skeleton-shimmer 1.4s infinite ease-in-out;
+            border-radius: 6px;
         }
 
         @keyframes skeleton-shimmer {
@@ -158,212 +115,329 @@
             100% { background-position: -200% 0; }
         }
 
-        .skeleton-card {
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid #1e293b;
-            border-left: 4px solid #1e293b;
-            position: relative;
+        .filter-btn.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
         }
-        
-        /* 滚动条美化 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
     </style>
 </head>
-<body>
-    
-    <header class="system-topbar">
-        <div class="system-title font-sans">
-            <div class="mac-dots">
-                <div class="mac-dot mac-close"></div>
-                <div class="mac-dot mac-min"></div>
-                <div class="mac-dot mac-max"></div>
+<body class=bg-dark-bg min-h-screen flex flex-col font-sans relative selection:bg-blue-500/30 selection:text-blue-200>
+
+    <div class=glow-bg></div>
+    <div class=fixed inset-0 bg-grid pointer-events-none z-0></div>
+
+    <!-- 顶部导航栏 -->
+    <header class=sticky top-4 z-50 max-w-5xl mx-auto w-full px-4 mb-6>
+        <nav class=bg-dark-surface/80 backdrop-blur-xl border border-white/10 rounded-full px-5 py-3 flex items-center justify-between shadow-2xl shadow-black/50>
+            <a href=../ class=flex items-center space-x-3 group>
+                <div class=w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform>
+                    A
+                </div>
+                <div class=flex flex-col>
+                    <span class=font-bold text-sm tracking-tight text-white group-hover:text-blue-400 transition-colors>ArousX_CORE</span>
+                    <span class=text-[10px] text-slate-400 font-mono>mohub.online / catalog</span>
+                </div>
+            </a>
+
+            <div class=flex items-center space-x-2>
+                <a href=../ class=px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all flex items-center space-x-1.5>
+                    <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M10 19l-7-7m0 0l7-7m-7 7h18></path></svg>
+                    <span>返回主页</span>
+                </a>
             </div>
-            <span class="font-bold text-slate-300">root@arousx_core:</span> <span class="ml-2 text-slate-500">~/catalog</span>
-        </div>
-        <div class="flex items-center space-x-6 text-xs text-slate-500 font-bold font-mono">
-            <span class="hidden sm:inline-block">UPTIME: 99.9%</span>
-            <span class="text-blue-500">SYS_STATUS: [ OK ]</span>
-        </div>
+        </nav>
     </header>
 
-    <div class="page-wrapper">
-        
-        <nav class="border-b border-slate-800 pb-5 mb-10 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+    <!-- 主体内容 -->
+    <main class=flex-grow max-w-5xl mx-auto w-full px-4 py-4 z-10>
+
+        <!-- 页面标题与搜索过滤栏 -->
+        <div class=mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/5>
             <div>
-                <div class="text-xs text-blue-500 font-bold tracking-widest mb-2">> DIR / ROOT / CATALOG</div>
-                <div class="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter flex items-center">
-                    <span class="w-2.5 h-8 bg-blue-500 mr-4 inline-block shadow-[0_0_12px_#3b82f6]"></span>
+                <div class=inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-2>
+                    <span class=w-2 h-2 rounded-full bg-blue-400></span>
+                    <span>DIRECTORY ARCHIVE</span>
+                </div>
+                <h1 class=text-3xl sm:text-4xl font-extrabold text-white tracking-tight>
                     资源档案目录
-                </div>
-            </div>
-            <a href="../index.html" class="text-sm text-slate-500 hover:text-blue-400 transition-colors flex items-center space-x-2 font-bold group pb-1">
-                <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                <span>[ ESC ] 返回主控制台</span>
-            </a>
-        </nav>
-
-        <!-- 骨架屏容器 (Skeleton Screen) -->
-        <div id="skeleton-grid" class="masonry-container flex-grow transition-opacity duration-300">
-            <!-- 骨架卡片 1 -->
-            <div class="masonry-item">
-                <div class="skeleton-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="skeleton-block h-5 w-20"></div>
-                        <div class="skeleton-block h-4 w-10"></div>
-                    </div>
-                    <div class="skeleton-block h-7 w-3/4 mb-4"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="skeleton-block h-4 w-full"></div>
-                        <div class="skeleton-block h-4 w-5/6"></div>
-                    </div>
-                    <div class="skeleton-block h-10 w-full"></div>
-                </div>
+                </h1>
+                <p class=text-slate-400 text-sm mt-1>
+                    精选云端资源、独立工具与实验应用归档。
+                </p>
             </div>
 
-            <!-- 骨架卡片 2 -->
-            <div class="masonry-item">
-                <div class="skeleton-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="skeleton-block h-5 w-24"></div>
-                        <div class="skeleton-block h-4 w-10"></div>
-                    </div>
-                    <div class="skeleton-block h-7 w-2/3 mb-4"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="skeleton-block h-4 w-full"></div>
-                        <div class="skeleton-block h-4 w-4/5"></div>
-                        <div class="skeleton-block h-4 w-3/4"></div>
-                    </div>
-                    <div class="skeleton-block h-10 w-full"></div>
+            <!-- 搜索与分类过滤器 -->
+            <div class=flex flex-col sm:flex-row items-stretch sm:items-center gap-3>
+                <div class=relative>
+                    <input id=search-input type=text placeholder=搜索资源与工具... class=w-full sm:w-60 bg-white/5 border border-white/10 focus:border-blue-500/50 rounded-2xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all>
+                    <svg class=w-4 h-4 text-slate-500 absolute right-3.5 top-2.5 pointer-events-none fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z></path></svg>
                 </div>
-            </div>
 
-            <!-- 骨架卡片 3 -->
-            <div class="masonry-item">
-                <div class="skeleton-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="skeleton-block h-5 w-20"></div>
-                        <div class="skeleton-block h-4 w-10"></div>
-                    </div>
-                    <div class="skeleton-block h-7 w-1/2 mb-4"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="skeleton-block h-4 w-full"></div>
-                        <div class="skeleton-block h-4 w-3/5"></div>
-                    </div>
-                    <div class="skeleton-block h-10 w-full"></div>
-                </div>
-            </div>
-
-            <!-- 骨架卡片 4 -->
-            <div class="masonry-item">
-                <div class="skeleton-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <div class="skeleton-block h-5 w-28"></div>
-                        <div class="skeleton-block h-4 w-10"></div>
-                    </div>
-                    <div class="skeleton-block h-7 w-4/5 mb-4"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="skeleton-block h-4 w-full"></div>
-                        <div class="skeleton-block h-4 w-2/3"></div>
-                    </div>
-                    <div class="skeleton-block h-10 w-full"></div>
+                <div class=flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0>
+                    <button onclick=filterCategory('all') class=filter-btn active px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
+                        全部
+                    </button>
+                    <button onclick=filterCategory('app') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
+                        应用
+                    </button>
+                    <button onclick=filterCategory('tool') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
+                        工具
+                    </button>
+                    <button onclick=filterCategory('game') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
+                        游戏
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- 真实内容容器 (瀑布流 Masonry) -->
-        <main id="content-grid" class="masonry-container flex-grow opacity-0 pointer-events-none transition-all duration-500 translate-y-3 hidden">
+        <!-- 骨架屏 (Skeleton Screen) -->
+        <div id=skeleton-grid class=grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity duration-300>
+            <div class=bento-card p-6 flex flex-col justify-between h-56>
+                <div>
+                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-20></div><div class=skeleton-block h-4 w-10></div></div>
+                    <div class=skeleton-block h-6 w-3/4 mb-3></div>
+                    <div class=skeleton-block h-4 w-full mb-2></div>
+                    <div class=skeleton-block h-4 w-2/3></div>
+                </div>
+                <div class=skeleton-block h-10 w-full mt-4></div>
+            </div>
+            <div class=bento-card p-6 flex flex-col justify-between h-56>
+                <div>
+                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-24></div><div class=skeleton-block h-4 w-10></div></div>
+                    <div class=skeleton-block h-6 w-2/3 mb-3></div>
+                    <div class=skeleton-block h-4 w-full mb-2></div>
+                    <div class=skeleton-block h-4 w-4/5></div>
+                </div>
+                <div class=skeleton-block h-10 w-full mt-4></div>
+            </div>
+            <div class=bento-card p-6 flex flex-col justify-between h-56>
+                <div>
+                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-20></div><div class=skeleton-block h-4 w-10></div></div>
+                    <div class=skeleton-block h-6 w-1/2 mb-3></div>
+                    <div class=skeleton-block h-4 w-full mb-2></div>
+                    <div class=skeleton-block h-4 w-3/5></div>
+                </div>
+                <div class=skeleton-block h-10 w-full mt-4></div>
+            </div>
+        </div>
+
+        <!-- 真实卡片网格 (Bento Grid) -->
+        <div id=content-grid class=grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-0 pointer-events-none transition-all duration-500 translate-y-3 hidden>
             
-            <div class="masonry-item">
-                <div class="tech-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <span class="text-xs font-bold px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            <!-- 卡片 1: 喵斯计划通 -->
+            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=app data-title=喵斯计划通解锁 夸克网盘>
+                <div class=relative z-10>
+                    <div class=flex items-center justify-between mb-4>
+                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20>
                             CLASS: APP
                         </span>
-                        <span class="text-slate-600 text-xs font-mono">#001</span>
+                        <span class=text-xs font-mono text-slate-500>#001</span>
                     </div>
-                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">喵斯计划通解锁</h3>
-                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                        > STATUS: 实时更新<br/>
-                        > INFO: 部署后无需手动更新
+                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors>
+                        喵斯计划通解锁
+                    </h3>
+                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
+                        云端一键转存下载，包含最新稳定更新包，提取码直连通道。
+                    </p>
+                    <div class=flex items-center space-x-2 mb-4>
+                        <span class=text-xs text-slate-500 font-mono>提取码:</span>
+                        <code class=px-2 py-0.5 rounded-lg bg-black/40 border border-purple-500/30 text-purple-300 font-mono text-xs font-bold select-all>jnt6</code>
+                        <button onclick=copyPassword('jnt6') class=p-1 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors title=复制提取码>
+                            <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z></path></svg>
+                        </button>
                     </div>
-                    <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                        <span>> FETCH_DATA</span>
+                </div>
+                <div class=relative z-10 pt-3 border-t border-white/5>
+                    <a href=https://pan.quark.cn/s/d6547496bff2?pwd=jnt6 target=_blank class=w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-purple-600/20>
+                        <span>获取资源网盘</span>
+                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14></path></svg>
                     </a>
                 </div>
             </div>
 
-            <div class="masonry-item">
-                <div class="tech-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <!-- 卡片 2: 匿名树洞 -->
+            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=tool data-title=Mohub 匿名树洞 倾诉 留言>
+                <div class=relative z-10>
+                    <div class=flex items-center justify-between mb-4>
+                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20>
                             CLASS: TOOL
                         </span>
-                        <span class="text-slate-600 text-xs font-mono">#002</span>
+                        <span class=text-xs font-mono text-slate-500>#002</span>
                     </div>
-                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">Mohub 匿名树洞</h3>
-                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                        > STATUS: 模块正常运行<br/>
-                        > INFO: 点击载入留言与倾诉终端
+                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors>
+                        Mohub 匿名树洞
+                    </h3>
+                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
+                        匿名倾诉与想法分享终端，随时留下你的留言或浏览他人动态。
+                    </p>
+                    <div class=flex items-center space-x-2 text-xs text-emerald-400/80 font-mono mb-4>
+                        <span class=w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse></span>
+                        <span>服务正常运行中</span>
                     </div>
-                    <a href="../shudong/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                        <span>> EXECUTE</span>
+                </div>
+                <div class=relative z-10 pt-3 border-t border-white/5>
+                    <a href=../shudong/ class=w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-emerald-600/20>
+                        <span>打开树洞终端</span>
+                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M14 5l7 7m0 0l-7 7m7-7H3></path></svg>
                     </a>
                 </div>
             </div>
 
-            <div class="masonry-item">
-                <div class="tech-card p-6 flex flex-col">
-                    <div class="flex justify-between items-start mb-5">
-                        <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                            CLASS: Game
+            <!-- 卡片 3: 笨鸟先飞 -->
+            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=game data-title=笨鸟先飞 飞行穿梭 小游戏 flappy bird>
+                <div class=relative z-10>
+                    <div class=flex items-center justify-between mb-4>
+                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20>
+                            CLASS: GAME
                         </span>
-                        <span class="text-slate-600 text-xs font-mono">#003</span>
+                        <span class=text-xs font-mono text-slate-500>#003</span>
                     </div>
-                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">笨鸟先飞</h3>
-                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                        > STATUS: 游戏正常运行<br/>
-                        > GAME: 点击进行游玩
+                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors>
+                        笨鸟先飞 // 飞行穿梭
+                    </h3>
+                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
+                        经典 HTML5 Canvas 敏捷避障小游戏，操作飞船躲避障碍物冲刺高分。
+                    </p>
+                    <div class=flex items-center space-x-2 text-xs text-amber-400/80 font-mono mb-4>
+                        <span>🎮 点击即玩 · 免安装</span>
                     </div>
-                    <a href="../game/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                        <span>> EXECUTE</span>
+                </div>
+                <div class=relative z-10 pt-3 border-t border-white/5>
+                    <a href=../game/ class=w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-amber-600/20>
+                        <span>开始游戏</span>
+                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M14 5l7 7m0 0l-7 7m7-7H3></path></svg>
                     </a>
                 </div>
             </div>
-        </main>
 
-        <footer class="mt-16 pt-6 border-t border-slate-800/80 text-slate-600 text-xs flex flex-col md:flex-row justify-between items-center font-mono gap-4">
-            <span class="opacity-80">ArousX_CORE // SECURE CONNECTION</span>
-            <span class="text-slate-500">© 2026 ArousX Resource Lab. All rights reserved.</span>
-            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></span> DB_SYNC: SUCCESS</span>
-        </footer>
+        </div>
 
+        <!-- 空搜索结果提示 -->
+        <div id=empty-state class=hidden text-center py-16>
+            <div class=w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 mx-auto mb-3>
+                <svg class=w-6 h-6 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z></path></svg>
+            </div>
+            <p class=text-slate-400 text-sm>未找到相关资源或工具</p>
+            <p class=text-slate-600 text-xs mt-1>请尝试更换关键词搜索</p>
+        </div>
+    </main>
+
+    <!-- 底部版权栏 -->
+    <footer class=max-w-5xl mx-auto w-full px-4 py-8 mt-12 border-t border-white/5 text-slate-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-4 font-mono z-10>
+        <div class=flex items-center space-x-2>
+            <span class=w-2 h-2 rounded-full bg-blue-500></span>
+            <span>ArousX_CORE © 2026</span>
+        </div>
+        <div class=flex items-center space-x-6 text-slate-400>
+            <a href=../ class=hover:text-blue-400 transition-colors>Home</a>
+            <a href=../shudong/ class=hover:text-blue-400 transition-colors>Shudong</a>
+            <a href=../game/ class=hover:text-blue-400 transition-colors>Game</a>
+            <a href=https://mohub.online class=hover:text-blue-400 transition-colors>mohub.online</a>
+        </div>
+    </footer>
+
+    <!-- Toast 复制提示浮层 -->
+    <div id=toast class=fixed bottom-6 right-6 z-50 bg-slate-900/90 backdrop-blur-xl border border-blue-500/40 text-blue-300 text-xs px-4 py-2.5 rounded-2xl shadow-2xl hidden items-center space-x-2 font-mono>
+        <svg class=w-4 h-4 text-emerald-400 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M5 13l4 4L19 7></path></svg>
+        <span id=toast-msg>已复制到剪贴板！</span>
     </div>
 
     <script>
-        // 骨架屏平滑过渡到真实内容
+        // 1. 鼠标跟随聚光灯效果
+        function initSpotlights() {
+            document.querySelectorAll('.bento-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', ${x}px);
+                    card.style.setProperty('--mouse-y', ${y}px);
+                });
+            });
+        }
+        initSpotlights();
+
+        // 2. 骨架屏平滑过渡
         window.addEventListener('DOMContentLoaded', () => {
             const skeletonGrid = document.getElementById('skeleton-grid');
             const contentGrid = document.getElementById('content-grid');
 
-            // 模拟短暂的数据流加载并平滑切换
             setTimeout(() => {
                 skeletonGrid.classList.add('opacity-0', 'pointer-events-none');
-                
                 setTimeout(() => {
                     skeletonGrid.classList.add('hidden');
                     contentGrid.classList.remove('hidden');
-                    
-                    // 触发平滑淡入
                     requestAnimationFrame(() => {
                         contentGrid.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
                         contentGrid.classList.add('opacity-100', 'translate-y-0');
                     });
-                }, 300);
-            }, 500); // 骨架屏展示 500ms，带来极佳的加载质感
+                }, 200);
+            }, 300);
         });
+
+        // 3. 分类过滤与搜索逻辑
+        let activeCat = 'all';
+        const searchInput = document.getElementById('search-input');
+        const emptyState = document.getElementById('empty-state');
+
+        function filterCategory(cat) {
+            activeCat = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText.toLowerCase().includes(cat === 'all' ? '全部' : cat)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.item-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const title = card.getAttribute('data-title').toLowerCase();
+
+                const matchesCat = (activeCat === 'all' || category === activeCat);
+                const matchesSearch = (!query || title.includes(query));
+
+                if (matchesCat && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            if (visibleCount === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        // 4. 一键复制提取码
+        function copyPassword(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toast-msg');
+                toastMsg.innerText = 提取码 [  ] 已复制到剪贴板！;
+                toast.classList.remove('hidden');
+                toast.classList.add('flex');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.classList.remove('flex');
+                }, 2500);
+            }).catch(err => {
+                alert('复制失败：' + text);
+            });
+        }
     </script>
 </body>
 </html>
