@@ -195,7 +195,9 @@ body {
     justify-content: space-between;
     overflow: hidden;
     border-radius: var(--radius);
-    background-color: var(--card);
+    background-color: rgba(9, 9, 11, 0.78);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     box-shadow: 0 -20px 80px -20px rgba(255, 255, 255, 0.12) inset;
     transform: translateZ(0);
@@ -203,7 +205,8 @@ body {
 }
 
 .bento-card:hover {
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(14, 14, 18, 0.85);
 }
 
 /* Grid Spanning */

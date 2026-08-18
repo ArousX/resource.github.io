@@ -1,40 +1,44 @@
 /**
- * WebGL Dynamic Chinese Ink Wash Fluid Background (动态水墨流体引擎)
- * Based on GPU Navier-Stokes fluid & ink wash dynamics (PavelDoGreat architecture)
- * Customized for Chinese Ink Wash: 浓墨、淡墨、青黛、烟岚
+ * WebGL Dynamic Chinese Ink Wash Fluid Background (动态水墨流光物理引擎)
+ * High-performance, GPU-accelerated Navier-Stokes Fluid & Ink Dispersion
  */
-(function () {
+(function() {
     'use strict';
 
-    const canvas = document.createElement('canvas');
-    canvas.id = 'webgl-ink-canvas';
-    canvas.style.position = 'fixed';
-    canvas.style.inset = '0';
-    canvas.style.width = '100vw';
-    canvas.style.height = '100vh';
-    canvas.style.zIndex = '0';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.opacity = '0.85';
-    document.body.prepend(canvas);
+    // 创建并配置 Canvas
+    let canvas = document.getElementById('webgl-ink-canvas');
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'webgl-ink-canvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        canvas.style.zIndex = '0';
+        canvas.style.pointerEvents = 'none';
+        document.body.prepend(canvas);
+    }
 
     const config = {
         SIM_RESOLUTION: 128,
         DYE_RESOLUTION: 512,
-        DENSITY_DISSIPATION: 0.98,
-        VELOCITY_DISSIPATION: 0.98,
+        DENSITY_DISSIPATION: 0.992,  // 水墨消散速度（持久晕染）
+        VELOCITY_DISSIPATION: 0.985, // 速度消散
         PRESSURE: 0.8,
         PRESSURE_ITERATIONS: 20,
-        CURL: 30,
-        SPLAT_RADIUS: 0.28,
-        SPLAT_FORCE: 6000,
-        SHADING: true,
-        COLORFUL: false,
-        COLOR_PALETTE: [
-            { r: 0.15, g: 0.22, b: 0.35 },  // 黛蓝淡墨
-            { r: 0.08, g: 0.12, b: 0.20 },  // 焦墨
-            { r: 0.25, g: 0.35, b: 0.50 },  // 苍青微岚
-            { r: 0.18, g: 0.15, b: 0.28 },  // 紫烟轻岚
-            { r: 0.30, g: 0.40, b: 0.55 },  // 远山素青
+        CURL: 35,                     // 涡流卷曲度
+        SPLAT_RADIUS: 0.35,           // 水墨滴半径
+        SPLAT_FORCE: 4000,
+        AUTO_INTERVAL: 1600,          // 自动吐墨间隔 (ms)
+        // 东方水墨与烟岚色调（明暗对比清晰、仙气缥缈）
+        PALETTE: [
+            { r: 0.40, g: 0.65, b: 0.95 }, // 苍青流光
+            { r: 0.75, g: 0.85, b: 1.00 }, // 银白烟岚
+            { r: 0.55, g: 0.45, b: 0.90 }, // 黛紫微光
+            { r: 0.30, g: 0.50, b: 0.80 }, // 远山霁蓝
+            { r: 0.80, g: 0.90, b: 0.95 }, // 素雪水晕
+            { r: 0.45, g: 0.70, b: 0.85 }  // 碧波清韵
         ]
     };
 
@@ -99,34 +103,26 @@
     }
 
     const context = getWebGLContext(canvas);
-    if (!context) return;
+    if (!context) {
+        console.warn('WebGL not supported for ink background');
+        return;
+    }
     const { gl, ext } = context;
 
     class Program {
         constructor(vertexShader, fragmentShader) {
             this.uniforms = {};
-            this.program = createProgram(vertexShader, fragmentShader);
-            this.uniforms = getUniforms(this.program);
+            this.program = gl.createProgram();
+            gl.attachShader(this.program, vertexShader);
+            gl.attachShader(this.program, fragmentShader);
+            gl.linkProgram(this.program);
+            const uniformCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+            for (let i = 0; i < uniformCount; i++) {
+                const name = gl.getActiveUniform(this.program, i).name;
+                this.uniforms[name] = gl.getUniformLocation(this.program, name);
+            }
         }
         bind() { gl.useProgram(this.program); }
-    }
-
-    function createProgram(vertexShader, fragmentShader) {
-        const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        return program;
-    }
-
-    function getUniforms(program) {
-        const uniforms = [];
-        const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-        for (let i = 0; i < uniformCount; i++) {
-            const uniformName = gl.getActiveUniform(program, i).name;
-            uniforms[uniformName] = gl.getUniformLocation(program, uniformName);
-        }
-        return uniforms;
     }
 
     function compileShader(type, source) {
@@ -155,6 +151,7 @@
         }
     );
 
+    // 显示着色器：提升水墨光泽感与透明度
     const displayShader = compileShader(gl.FRAGMENT_SHADER, 
         precision highp float;
         precision highp sampler2D;
@@ -162,8 +159,8 @@
         uniform sampler2D uTexture;
         void main () {
             vec3 c = texture2D(uTexture, vUv).rgb;
-            float a = max(c.r, max(c.g, c.b));
-            gl_FragColor = vec4(c, a * 0.85);
+            float lum = dot(c, vec3(0.299, 0.587, 0.114));
+            gl_FragColor = vec4(c, min(lum * 1.6, 0.92));
         }
     );
 
@@ -286,7 +283,6 @@
             float R = texture2D(uPressure, vR).x;
             float T = texture2D(uPressure, vT).x;
             float B = texture2D(uPressure, vB).x;
-            float C = texture2D(uPressure, vUv).x;
             float divergence = texture2D(uDivergence, vUv).x;
             float pressure = (L + R + B + T - divergence) * 0.25;
             gl_FragColor = vec4(pressure, 0.0, 0.0, 1.0);
@@ -399,9 +395,11 @@
     })();
 
     function resizeCanvas() {
-        if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
             initFramebuffers();
         }
     }
@@ -423,40 +421,40 @@
     }
 
     let colorIdx = 0;
-    function multipleSplats(amount) {
-        for (let i = 0; i < amount; i++) {
-            const color = config.COLOR_PALETTE[colorIdx++ % config.COLOR_PALETTE.length];
-            const x = Math.random();
-            const y = Math.random();
-            const dx = 1000 * (Math.random() - 0.5);
-            const dy = 1000 * (Math.random() - 0.5);
-            splat(x, y, dx, dy, color);
-        }
+    function generateInkDrop(x, y, power = 1.0) {
+        const color = config.PALETTE[colorIdx++ % config.PALETTE.length];
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (200 + Math.random() * 400) * power;
+        const dx = Math.cos(angle) * speed;
+        const dy = Math.sin(angle) * speed;
+        splat(x, y, dx, dy, color);
     }
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // 初始生成多股浓墨流体
-    multipleSplats(5);
+    // 页面初始化时生成数股水墨晕染
+    setTimeout(() => {
+        generateInkDrop(0.3, 0.35, 1.5);
+        generateInkDrop(0.7, 0.45, 1.5);
+        generateInkDrop(0.5, 0.65, 1.8);
+    }, 100);
 
-    // 周期性自动轻微吐墨 (Autonomous Ink Drift)
-    let lastAutoSplat = Date.now();
-
-    // 鼠标与触摸水墨交互
-    let lastMouseX = 0, lastMouseY = 0;
+    // 鼠标与触摸交互（平滑轨迹追踪）
+    let lastX = null, lastY = null;
     window.addEventListener('mousemove', e => {
         const x = e.clientX / window.innerWidth;
         const y = 1.0 - e.clientY / window.innerHeight;
-        const dx = (e.clientX - lastMouseX) * config.SPLAT_FORCE;
-        const dy = (lastMouseY - e.clientY) * config.SPLAT_FORCE;
-        lastMouseX = e.clientX;
-        lastMouseY = e.clientY;
+        if (lastX === null) { lastX = x; lastY = y; return; }
 
-        const speed = Math.hypot(dx, dy);
-        if (speed > 10) {
-            const color = config.COLOR_PALETTE[colorIdx++ % config.COLOR_PALETTE.length];
-            splat(x, y, dx * 0.1, dy * 0.1, color);
+        const dx = (x - lastX) * config.SPLAT_FORCE;
+        const dy = (y - lastY) * config.SPLAT_FORCE;
+        lastX = x;
+        lastY = y;
+
+        if (Math.hypot(dx, dy) > 2) {
+            const color = config.PALETTE[colorIdx++ % config.PALETTE.length];
+            splat(x, y, dx, dy, color);
         }
     });
 
@@ -465,28 +463,28 @@
             const touch = e.touches[0];
             const x = touch.clientX / window.innerWidth;
             const y = 1.0 - touch.clientY / window.innerHeight;
-            const dx = (touch.clientX - lastMouseX) * config.SPLAT_FORCE;
-            const dy = (lastMouseY - touch.clientY) * config.SPLAT_FORCE;
-            lastMouseX = touch.clientX;
-            lastMouseY = touch.clientY;
-            const color = config.COLOR_PALETTE[colorIdx++ % config.COLOR_PALETTE.length];
-            splat(x, y, dx * 0.1, dy * 0.1, color);
+            if (lastX === null) { lastX = x; lastY = y; return; }
+            const dx = (x - lastX) * config.SPLAT_FORCE;
+            const dy = (y - lastY) * config.SPLAT_FORCE;
+            lastX = x;
+            lastY = y;
+            const color = config.PALETTE[colorIdx++ % config.PALETTE.length];
+            splat(x, y, dx, dy, color);
         }
     }, { passive: true });
 
+    let lastAutoTime = Date.now();
     let lastTime = Date.now();
+
     function update() {
         const now = Date.now();
         let dt = Math.min((now - lastTime) / 1000, 0.016);
         lastTime = now;
 
-        // 定时优雅水墨吐纳
-        if (now - lastAutoSplat > 2500) {
-            const color = config.COLOR_PALETTE[colorIdx++ % config.COLOR_PALETTE.length];
-            const x = 0.2 + Math.random() * 0.6;
-            const y = 0.2 + Math.random() * 0.6;
-            splat(x, y, (Math.random() - 0.5) * 300, (Math.random() - 0.5) * 300, color);
-            lastAutoSplat = now;
+        // 持续自主缓慢水墨流动（云烟吐纳）
+        if (now - lastAutoTime > config.AUTO_INTERVAL) {
+            generateInkDrop(0.15 + Math.random() * 0.7, 0.15 + Math.random() * 0.7, 0.8);
+            lastAutoTime = now;
         }
 
         // 1. Curl
