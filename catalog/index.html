@@ -1,442 +1,409 @@
-﻿<!DOCTYPE html>
-<html lang=zh-CN class=dark>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset=UTF-8>
-    <meta name=viewport content=width=device-width, initial-scale=1.0>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>资源档案库 - ArousX_CORE</title>
-    <script src=https://cdn.tailwindcss.com></script>
-    <link rel=preconnect href=https://fonts.googleapis.com>
-    <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-    <link href=https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap rel=stylesheet>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'Noto Sans SC', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        dark: {
-                            bg: '#08090d',
-                            surface: '#0f1219',
-                            card: '#131722',
-                            border: '#1f2638',
-                        },
-                        brand: {
-                            blue: '#3b82f6',
-                            cyan: '#06b6d4',
-                            indigo: '#6366f1',
-                            purple: '#a855f7',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #08090d;
-            color: #f1f5f9;
-            overflow-x: hidden;
-            font-feature-settings: cv02, cv03, cv04, cv11;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-color: #08090d;
+            --surface-color: #0f131c;
+            --card-bg: rgba(18, 22, 34, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(59, 130, 246, 0.4);
+            --primary-blue: #3b82f6;
+            --primary-indigo: #6366f1;
+            --primary-purple: #a855f7;
+            --primary-cyan: #06b6d4;
+            --primary-emerald: #10b981;
+            --primary-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
         }
-
-        /* 弥散光晕背景 */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
         .glow-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0;
             background: 
-                radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 15% 65%, rgba(168, 85, 247, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.14) 0%, transparent 45%),
+                radial-gradient(circle at 15% 65%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
                 radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
         }
-
         .bg-grid {
-            background-size: 32px 32px;
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background-size: 36px 36px;
             background-image: 
                 linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
-
-        /* 便当盒卡片 */
-        .bento-card {
-            background: rgba(19, 23, 34, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 1.5rem;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        .container {
+            max-width: 1080px; margin: 0 auto; width: 100%; padding: 0 1.25rem;
+            position: relative; z-index: 10;
+        }
+        .navbar-wrapper {
+            position: sticky; top: 1.25rem; z-index: 50; margin-bottom: 2rem;
+        }
+        .navbar {
+            background: rgba(15, 19, 28, 0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border); border-radius: 9999px;
+            padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        .brand-link { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+        .brand-logo {
+            width: 2.25rem; height: 2.25rem; border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.1rem; color: #fff;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        .brand-info { display: flex; flex-direction: column; }
+        .brand-name { font-weight: 800; font-size: 0.95rem; letter-spacing: -0.02em; color: #fff; }
+        .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-dim); }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem;
+            border-radius: 9999px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border); color: var(--text-muted);
+            text-decoration: none; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;
+        }
+        .back-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .header-bar {
+            display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;
+            padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        @media (min-width: 768px) {
+            .header-bar { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+        }
+        .filter-search-wrap {
+            display: flex; flex-direction: column; gap: 0.75rem;
+        }
+        @media (min-width: 640px) {
+            .filter-search-wrap { flex-direction: row; align-items: center; }
+        }
+        .search-box {
             position: relative;
-            overflow: hidden;
         }
-
+        .search-input {
+            width: 100%; min-width: 15rem; background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border); border-radius: 0.85rem;
+            padding: 0.55rem 1rem 0.55rem 2.2rem; font-size: 0.8rem; color: #fff;
+            outline: none; transition: all 0.2s;
+        }
+        .search-input:focus {
+            border-color: rgba(59, 130, 246, 0.5); background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        .search-icon {
+            position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+            color: var(--text-dim); pointer-events: none;
+        }
+        .filter-tabs {
+            display: flex; align-items: center; gap: 0.35rem; overflow-x: auto;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--card-border);
+            color: var(--text-muted); font-size: 0.75rem; font-weight: 600; padding: 0.45rem 0.85rem;
+            border-radius: 0.65rem; cursor: pointer; transition: all 0.2s;
+        }
+        .tab-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+        .tab-btn.active {
+            background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+        }
+        .cards-grid {
+            display: grid; grid-template-columns: 1fr; gap: 1rem;
+        }
+        @media (min-width: 640px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+        .bento-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 1.5rem; padding: 1.5rem;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; flex-direction: column; justify-content: space-between;
+            position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            min-height: 14rem;
+        }
         .bento-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(59, 130, 246, 0.35);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px -10px rgba(59, 130, 246, 0.15);
+            transform: translateY(-4px); border-color: var(--card-hover-border);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 30px -5px rgba(59, 130, 246, 0.18);
         }
-
         .bento-card::before {
-            content: '';
-            position: absolute;
-            top: var(--mouse-y, -1000px);
-            left: var(--mouse-x, -1000px);
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 70%);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1;
+            content: ''; position: absolute;
+            top: var(--mouse-y, -1000px); left: var(--mouse-x, -1000px);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(99, 102, 241, 0.04) 45%, transparent 70%);
+            transform: translate(-50%, -50%); pointer-events: none; opacity: 0;
+            transition: opacity 0.3s; z-index: 1;
         }
-
-        .bento-card:hover::before {
-            opacity: 1;
+        .bento-card:hover::before { opacity: 1; }
+        .card-content { position: relative; z-index: 2; }
+        .card-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .badge {
+            font-size: 0.7rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+            padding: 0.2rem 0.55rem; border-radius: 0.5rem; text-transform: uppercase;
         }
-
-        /* 骨架屏扫描动画 */
+        .badge.app { background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.25); color: #d8b4fe; }
+        .badge.tool { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); color: #6ee7b7; }
+        .badge.game { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); color: #fcd34d; }
+        .card-title { font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem; }
+        .card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 1rem; }
+        .btn-card {
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            width: 100%; font-weight: 700; font-size: 0.8rem; padding: 0.65rem 1rem;
+            border-radius: 0.75rem; text-decoration: none; transition: all 0.2s;
+        }
+        .btn-card.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
+        .btn-card.purple:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5); }
+        .btn-card.emerald { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
+        .btn-card.emerald:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); }
+        .btn-card.amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        .btn-card.amber:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5); }
         .skeleton-block {
             background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.7) 50%, rgba(30, 41, 59, 0.4) 100%);
             background-size: 200% 100%;
-            animation: skeleton-shimmer 1.4s infinite ease-in-out;
-            border-radius: 6px;
+            animation: shimmer 1.4s infinite ease-in-out; border-radius: 6px;
         }
-
-        @keyframes skeleton-shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .footer {
+            margin-top: 3.5rem; padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-dim);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            gap: 1rem; z-index: 10;
         }
-
-        .filter-btn.active {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
+        @media (min-width: 640px) { .footer { flex-direction: row; } }
+        .footer-links { display: flex; gap: 1.5rem; }
+        .footer-link { color: var(--text-muted); text-decoration: none; }
+        .footer-link:hover { color: var(--primary-blue); }
+        .code-pill {
+            display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.5rem;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            font-weight: 700; color: #d8b4fe;
+        }
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 100;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.4); color: #93c5fd;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+            padding: 0.65rem 1.25rem; border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8); display: none; align-items: center; gap: 0.5rem;
         }
     </style>
 </head>
-<body class=bg-dark-bg min-h-screen flex flex-col font-sans relative selection:bg-blue-500/30 selection:text-blue-200>
-
-    <div class=glow-bg></div>
-    <div class=fixed inset-0 bg-grid pointer-events-none z-0></div>
-
-    <!-- 顶部导航栏 -->
-    <header class=sticky top-4 z-50 max-w-5xl mx-auto w-full px-4 mb-6>
-        <nav class=bg-dark-surface/80 backdrop-blur-xl border border-white/10 rounded-full px-5 py-3 flex items-center justify-between shadow-2xl shadow-black/50>
-            <a href=../ class=flex items-center space-x-3 group>
-                <div class=w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform>
-                    A
-                </div>
-                <div class=flex flex-col>
-                    <span class=font-bold text-sm tracking-tight text-white group-hover:text-blue-400 transition-colors>ArousX_CORE</span>
-                    <span class=text-[10px] text-slate-400 font-mono>mohub.online / catalog</span>
-                </div>
-            </a>
-
-            <div class=flex items-center space-x-2>
-                <a href=../ class=px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 border border-white/10 transition-all flex items-center space-x-1.5>
-                    <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M10 19l-7-7m0 0l7-7m-7 7h18></path></svg>
-                    <span>返回主页</span>
+<body>
+    <div class="glow-bg"></div>
+    <div class="bg-grid"></div>
+    <div class="container">
+        <header class="navbar-wrapper">
+            <nav class="navbar">
+                <a href="../" class="brand-link">
+                    <div class="brand-logo">A</div>
+                    <div class="brand-info">
+                        <span class="brand-name">ArousX_CORE</span>
+                        <span class="brand-sub">mohub.online / catalog</span>
+                    </div>
                 </a>
-            </div>
-        </nav>
-    </header>
+                <a href="../" class="back-btn">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>返回主控制台</span>
+                </a>
+            </nav>
+        </header>
 
-    <!-- 主体内容 -->
-    <main class=flex-grow max-w-5xl mx-auto w-full px-4 py-4 z-10>
-
-        <!-- 页面标题与搜索过滤栏 -->
-        <div class=mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/5>
+        <section class="header-bar">
             <div>
-                <div class=inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-2>
-                    <span class=w-2 h-2 rounded-full bg-blue-400></span>
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); color: var(--primary-blue); font-size: 0.72rem; font-weight: 700; margin-bottom: 0.5rem;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-blue);"></span>
                     <span>DIRECTORY ARCHIVE</span>
                 </div>
-                <h1 class=text-3xl sm:text-4xl font-extrabold text-white tracking-tight>
-                    资源档案目录
-                </h1>
-                <p class=text-slate-400 text-sm mt-1>
-                    精选云端资源、独立工具与实验应用归档。
-                </p>
+                <h1 style="font-size: 2.25rem; font-weight: 900; color: #fff; letter-spacing: -0.02em;">资源档案目录</h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">精选云端资源、独立工具与实验应用归档。</p>
             </div>
-
-            <!-- 搜索与分类过滤器 -->
-            <div class=flex flex-col sm:flex-row items-stretch sm:items-center gap-3>
-                <div class=relative>
-                    <input id=search-input type=text placeholder=搜索资源与工具... class=w-full sm:w-60 bg-white/5 border border-white/10 focus:border-blue-500/50 rounded-2xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all>
-                    <svg class=w-4 h-4 text-slate-500 absolute right-3.5 top-2.5 pointer-events-none fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z></path></svg>
+            <div class="filter-search-wrap">
+                <div class="search-box">
+                    <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input id="search-input" type="text" placeholder="搜索资源与工具..." class="search-input">
                 </div>
-
-                <div class=flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0>
-                    <button onclick=filterCategory('all') class=filter-btn active px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
-                        全部
-                    </button>
-                    <button onclick=filterCategory('app') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
-                        应用
-                    </button>
-                    <button onclick=filterCategory('tool') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
-                        工具
-                    </button>
-                    <button onclick=filterCategory('game') class=filter-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-white/5 border border-white/10 text-slate-300 hover:text-white transition-all>
-                        游戏
-                    </button>
+                <div class="filter-tabs">
+                    <button onclick="filterCat('all')" class="tab-btn active">全部</button>
+                    <button onclick="filterCat('app')" class="tab-btn">应用</button>
+                    <button onclick="filterCat('tool')" class="tab-btn">工具</button>
+                    <button onclick="filterCat('game')" class="tab-btn">游戏</button>
                 </div>
             </div>
+        </section>
+
+        <!-- 骨架屏 -->
+        <div id="skeleton-view" class="cards-grid">
+            <div class="bento-card"><div class="skeleton-block" style="height: 1.2rem; width: 30%; margin-bottom: 1rem;"></div><div class="skeleton-block" style="height: 1.5rem; width: 60%; margin-bottom: 0.75rem;"></div><div class="skeleton-block" style="height: 0.9rem; width: 90%; margin-bottom: 0.5rem;"></div><div class="skeleton-block" style="height: 2.5rem; width: 100%; margin-top: 1.5rem;"></div></div>
+            <div class="bento-card"><div class="skeleton-block" style="height: 1.2rem; width: 30%; margin-bottom: 1rem;"></div><div class="skeleton-block" style="height: 1.5rem; width: 60%; margin-bottom: 0.75rem;"></div><div class="skeleton-block" style="height: 0.9rem; width: 90%; margin-bottom: 0.5rem;"></div><div class="skeleton-block" style="height: 2.5rem; width: 100%; margin-top: 1.5rem;"></div></div>
+            <div class="bento-card"><div class="skeleton-block" style="height: 1.2rem; width: 30%; margin-bottom: 1rem;"></div><div class="skeleton-block" style="height: 1.5rem; width: 60%; margin-bottom: 0.75rem;"></div><div class="skeleton-block" style="height: 0.9rem; width: 90%; margin-bottom: 0.5rem;"></div><div class="skeleton-block" style="height: 2.5rem; width: 100%; margin-top: 1.5rem;"></div></div>
         </div>
 
-        <!-- 骨架屏 (Skeleton Screen) -->
-        <div id=skeleton-grid class=grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity duration-300>
-            <div class=bento-card p-6 flex flex-col justify-between h-56>
-                <div>
-                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-20></div><div class=skeleton-block h-4 w-10></div></div>
-                    <div class=skeleton-block h-6 w-3/4 mb-3></div>
-                    <div class=skeleton-block h-4 w-full mb-2></div>
-                    <div class=skeleton-block h-4 w-2/3></div>
-                </div>
-                <div class=skeleton-block h-10 w-full mt-4></div>
-            </div>
-            <div class=bento-card p-6 flex flex-col justify-between h-56>
-                <div>
-                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-24></div><div class=skeleton-block h-4 w-10></div></div>
-                    <div class=skeleton-block h-6 w-2/3 mb-3></div>
-                    <div class=skeleton-block h-4 w-full mb-2></div>
-                    <div class=skeleton-block h-4 w-4/5></div>
-                </div>
-                <div class=skeleton-block h-10 w-full mt-4></div>
-            </div>
-            <div class=bento-card p-6 flex flex-col justify-between h-56>
-                <div>
-                    <div class=flex justify-between mb-4><div class=skeleton-block h-5 w-20></div><div class=skeleton-block h-4 w-10></div></div>
-                    <div class=skeleton-block h-6 w-1/2 mb-3></div>
-                    <div class=skeleton-block h-4 w-full mb-2></div>
-                    <div class=skeleton-block h-4 w-3/5></div>
-                </div>
-                <div class=skeleton-block h-10 w-full mt-4></div>
-            </div>
-        </div>
-
-        <!-- 真实卡片网格 (Bento Grid) -->
-        <div id=content-grid class=grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-0 pointer-events-none transition-all duration-500 translate-y-3 hidden>
-            
-            <!-- 卡片 1: 喵斯计划通 -->
-            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=app data-title=喵斯计划通解锁 夸克网盘>
-                <div class=relative z-10>
-                    <div class=flex items-center justify-between mb-4>
-                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20>
-                            CLASS: APP
-                        </span>
-                        <span class=text-xs font-mono text-slate-500>#001</span>
+        <!-- 真实卡片 -->
+        <main id="content-view" class="cards-grid" style="display: none;">
+            <div class="bento-card item-card" data-category="app" data-title="喵斯计划通解锁 夸克网盘">
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="badge app">CLASS: APP</span>
+                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">#001</span>
                     </div>
-                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors>
-                        喵斯计划通解锁
-                    </h3>
-                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
-                        云端一键转存下载，包含最新稳定更新包，提取码直连通道。
-                    </p>
-                    <div class=flex items-center space-x-2 mb-4>
-                        <span class=text-xs text-slate-500 font-mono>提取码:</span>
-                        <code class=px-2 py-0.5 rounded-lg bg-black/40 border border-purple-500/30 text-purple-300 font-mono text-xs font-bold select-all>jnt6</code>
-                        <button onclick=copyPassword('jnt6') class=p-1 rounded bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors title=复制提取码>
-                            <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z></path></svg>
+                    <h3 class="card-title">喵斯计划通解锁</h3>
+                    <p class="card-desc">云端一键转存下载，包含最新稳定更新包，提取码直连通道。</p>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1.25rem;">
+                        <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-dim);">提取码:</span>
+                        <div class="code-pill">jnt6</div>
+                        <button onclick="copyPassword('jnt6')" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0.2rem;" title="复制">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                         </button>
                     </div>
                 </div>
-                <div class=relative z-10 pt-3 border-t border-white/5>
-                    <a href=https://pan.quark.cn/s/d6547496bff2?pwd=jnt6 target=_blank class=w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-purple-600/20>
+                <div class="card-footer" style="border: none; padding-top: 0;">
+                    <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-card purple">
                         <span>获取资源网盘</span>
-                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14></path></svg>
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </a>
                 </div>
             </div>
 
-            <!-- 卡片 2: 匿名树洞 -->
-            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=tool data-title=Mohub 匿名树洞 倾诉 留言>
-                <div class=relative z-10>
-                    <div class=flex items-center justify-between mb-4>
-                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20>
-                            CLASS: TOOL
-                        </span>
-                        <span class=text-xs font-mono text-slate-500>#002</span>
+            <div class="bento-card item-card" data-category="tool" data-title="Mohub 匿名树洞 倾诉 留言">
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="badge tool">CLASS: TOOL</span>
+                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">#002</span>
                     </div>
-                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors>
-                        Mohub 匿名树洞
-                    </h3>
-                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
-                        匿名倾诉与想法分享终端，随时留下你的留言或浏览他人动态。
-                    </p>
-                    <div class=flex items-center space-x-2 text-xs text-emerald-400/80 font-mono mb-4>
-                        <span class=w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse></span>
+                    <h3 class="card-title">Mohub 匿名树洞</h3>
+                    <p class="card-desc">匿名倾诉与想法分享终端，随时留下你的留言或浏览他人动态。</p>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--primary-emerald); margin-bottom: 1.25rem;">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-emerald);"></span>
                         <span>服务正常运行中</span>
                     </div>
                 </div>
-                <div class=relative z-10 pt-3 border-t border-white/5>
-                    <a href=../shudong/ class=w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-emerald-600/20>
+                <div class="card-footer" style="border: none; padding-top: 0;">
+                    <a href="../shudong/" class="btn-card emerald">
                         <span>打开树洞终端</span>
-                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M14 5l7 7m0 0l-7 7m7-7H3></path></svg>
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
 
-            <!-- 卡片 3: 笨鸟先飞 -->
-            <div class=bento-card p-6 flex flex-col justify-between group item-card data-category=game data-title=笨鸟先飞 飞行穿梭 小游戏 flappy bird>
-                <div class=relative z-10>
-                    <div class=flex items-center justify-between mb-4>
-                        <span class=px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20>
-                            CLASS: GAME
-                        </span>
-                        <span class=text-xs font-mono text-slate-500>#003</span>
+            <div class="bento-card item-card" data-category="game" data-title="笨鸟先飞 飞行穿梭 小游戏">
+                <div class="card-content">
+                    <div class="card-meta">
+                        <span class="badge game">CLASS: GAME</span>
+                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">#003</span>
                     </div>
-                    <h3 class=text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors>
-                        笨鸟先飞 // 飞行穿梭
-                    </h3>
-                    <p class=text-slate-400 text-xs leading-relaxed mb-4>
-                        经典 HTML5 Canvas 敏捷避障小游戏，操作飞船躲避障碍物冲刺高分。
-                    </p>
-                    <div class=flex items-center space-x-2 text-xs text-amber-400/80 font-mono mb-4>
+                    <h3 class="card-title">笨鸟先飞 // 飞行穿梭</h3>
+                    <p class="card-desc">经典 HTML5 Canvas 敏捷避障小游戏，操作飞船躲避障碍冲刺高分。</p>
+                    <div style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--primary-amber); margin-bottom: 1.25rem;">
                         <span>🎮 点击即玩 · 免安装</span>
                     </div>
                 </div>
-                <div class=relative z-10 pt-3 border-t border-white/5>
-                    <a href=../game/ class=w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-amber-600/20>
+                <div class="card-footer" style="border: none; padding-top: 0;">
+                    <a href="../game/" class="btn-card amber">
                         <span>开始游戏</span>
-                        <svg class=w-3.5 h-3.5 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M14 5l7 7m0 0l-7 7m7-7H3></path></svg>
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
             </div>
+        </main>
 
+        <div id="empty-box" style="display: none; text-align: center; padding: 4rem 0;">
+            <p style="color: var(--text-muted); font-size: 0.95rem;">未找到相关资源或工具</p>
+            <p style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.25rem;">请尝试更换关键词搜索</p>
         </div>
 
-        <!-- 空搜索结果提示 -->
-        <div id=empty-state class=hidden text-center py-16>
-            <div class=w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 mx-auto mb-3>
-                <svg class=w-6 h-6 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z></path></svg>
+        <footer class="footer">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--primary-blue);"></span>
+                <span>ArousX_CORE © 2026</span>
             </div>
-            <p class=text-slate-400 text-sm>未找到相关资源或工具</p>
-            <p class=text-slate-600 text-xs mt-1>请尝试更换关键词搜索</p>
-        </div>
-    </main>
+            <div class="footer-links">
+                <a href="../" class="footer-link">Home</a>
+                <a href="../shudong/" class="footer-link">Shudong</a>
+                <a href="../game/" class="footer-link">Game</a>
+                <a href="https://mohub.online" class="footer-link">mohub.online</a>
+            </div>
+        </footer>
+    </div>
 
-    <!-- 底部版权栏 -->
-    <footer class=max-w-5xl mx-auto w-full px-4 py-8 mt-12 border-t border-white/5 text-slate-500 text-xs flex flex-col sm:flex-row items-center justify-between gap-4 font-mono z-10>
-        <div class=flex items-center space-x-2>
-            <span class=w-2 h-2 rounded-full bg-blue-500></span>
-            <span>ArousX_CORE © 2026</span>
-        </div>
-        <div class=flex items-center space-x-6 text-slate-400>
-            <a href=../ class=hover:text-blue-400 transition-colors>Home</a>
-            <a href=../shudong/ class=hover:text-blue-400 transition-colors>Shudong</a>
-            <a href=../game/ class=hover:text-blue-400 transition-colors>Game</a>
-            <a href=https://mohub.online class=hover:text-blue-400 transition-colors>mohub.online</a>
-        </div>
-    </footer>
-
-    <!-- Toast 复制提示浮层 -->
-    <div id=toast class=fixed bottom-6 right-6 z-50 bg-slate-900/90 backdrop-blur-xl border border-blue-500/40 text-blue-300 text-xs px-4 py-2.5 rounded-2xl shadow-2xl hidden items-center space-x-2 font-mono>
-        <svg class=w-4 h-4 text-emerald-400 fill=none stroke=currentColor viewBox=0 0 24 24><path stroke-linecap=round stroke-linejoin=round stroke-width=2 d=M5 13l4 4L19 7></path></svg>
-        <span id=toast-msg>已复制到剪贴板！</span>
+    <div id="toast" class="toast">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--primary-emerald);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg">已复制提取码到剪贴板！</span>
     </div>
 
     <script>
-        // 1. 鼠标跟随聚光灯效果
-        function initSpotlights() {
-            document.querySelectorAll('.bento-card').forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', ${x}px);
-                    card.style.setProperty('--mouse-y', ${y}px);
-                });
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
             });
-        }
-        initSpotlights();
-
-        // 2. 骨架屏平滑过渡
-        window.addEventListener('DOMContentLoaded', () => {
-            const skeletonGrid = document.getElementById('skeleton-grid');
-            const contentGrid = document.getElementById('content-grid');
-
-            setTimeout(() => {
-                skeletonGrid.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    skeletonGrid.classList.add('hidden');
-                    contentGrid.classList.remove('hidden');
-                    requestAnimationFrame(() => {
-                        contentGrid.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
-                        contentGrid.classList.add('opacity-100', 'translate-y-0');
-                    });
-                }, 200);
-            }, 300);
         });
-
-        // 3. 分类过滤与搜索逻辑
-        let activeCat = 'all';
+        setTimeout(() => {
+            const sk = document.getElementById('skeleton-view');
+            const cv = document.getElementById('content-view');
+            if (sk && cv) {
+                sk.style.display = 'none';
+                cv.style.display = 'grid';
+            }
+        }, 200);
+        let curCat = 'all';
         const searchInput = document.getElementById('search-input');
-        const emptyState = document.getElementById('empty-state');
-
-        function filterCategory(cat) {
-            activeCat = cat;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.innerText.toLowerCase().includes(cat === 'all' ? '全部' : cat)) {
+        const emptyBox = document.getElementById('empty-box');
+        function filterCat(c) {
+            curCat = c;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.innerText.includes(c === 'all' ? '全部' : (c === 'app' ? '应用' : (c === 'tool' ? '工具' : '游戏')))) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
                 }
             });
-            applyFilters();
+            applyFilter();
         }
-
-        function applyFilters() {
-            const query = searchInput.value.trim().toLowerCase();
+        function applyFilter() {
+            const q = searchInput.value.trim().toLowerCase();
             const cards = document.querySelectorAll('.item-card');
-            let visibleCount = 0;
-
+            let vis = 0;
             cards.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const title = card.getAttribute('data-title').toLowerCase();
-
-                const matchesCat = (activeCat === 'all' || category === activeCat);
-                const matchesSearch = (!query || title.includes(query));
-
-                if (matchesCat && matchesSearch) {
-                    card.classList.remove('hidden');
-                    visibleCount++;
+                const cat = card.getAttribute('data-category');
+                const t = card.getAttribute('data-title').toLowerCase();
+                const mCat = (curCat === 'all' || cat === curCat);
+                const mSearch = (!q || t.includes(q));
+                if (mCat && mSearch) {
+                    card.style.display = 'flex';
+                    vis++;
                 } else {
-                    card.classList.add('hidden');
+                    card.style.display = 'none';
                 }
             });
-
-            if (visibleCount === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-            }
+            emptyBox.style.display = vis === 0 ? 'block' : 'none';
         }
-
-        searchInput.addEventListener('input', applyFilters);
-
-        // 4. 一键复制提取码
+        searchInput.addEventListener('input', applyFilter);
         function copyPassword(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
                 const toastMsg = document.getElementById('toast-msg');
-                toastMsg.innerText = 提取码 [  ] 已复制到剪贴板！;
-                toast.classList.remove('hidden');
-                toast.classList.add('flex');
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                    toast.classList.remove('flex');
-                }, 2500);
-            }).catch(err => {
-                alert('复制失败：' + text);
-            });
+                toastMsg.innerText = '提取码 [ ' + text + ' ] 已复制到剪贴板！';
+                toast.style.display = 'flex';
+                setTimeout(() => { toast.style.display = 'none'; }, 2200);
+            }).catch(() => { alert('提取码：' + text); });
         }
     </script>
 </body>
