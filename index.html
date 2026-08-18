@@ -254,9 +254,9 @@
         const totalChars = lines.reduce((acc, line) => acc + line.length, 0);
         let charsTyped = 0; 
 
-        const maxDecodeCycles = 2; 
-        const baseSpeed = 12;      
-        const lineDelay = 100;     
+        const maxDecodeCycles = 1; 
+        const baseSpeed = 6;      
+        const lineDelay = 30;     
 
         function decodeEffect() {
             if (lineIndex < lines.length) {
@@ -310,7 +310,7 @@
                     btnContainer.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
                     btnContainer.classList.add('opacity-100', 'translate-y-0');
                     btnContainer.style.pointerEvents = 'auto';
-                }, 400);
+                }, 150);
             }
         }
 
@@ -411,7 +411,7 @@
         window.onload = () => {
             initMatrixRain();         // 启动背景代码雨
             initRoseFourAnimation();  // 启动核心玫瑰动画
-            setTimeout(decodeEffect, 800); // 启动打字机加载效果
+            setTimeout(decodeEffect, 100); // 启动打字机加载效果
         };
     </script>
 </body>

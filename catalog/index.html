@@ -72,6 +72,35 @@
             flex-direction: column;
         }
 
+        /* 瀑布流布局系统 (Masonry Layout) */
+        .masonry-container {
+            column-count: 1;
+            column-gap: 1.5rem;
+            width: 100%;
+        }
+        @media (min-width: 640px) {
+            .masonry-container {
+                column-count: 2;
+            }
+        }
+        @media (min-width: 1024px) {
+            .masonry-container {
+                column-count: 3;
+            }
+        }
+        @media (min-width: 1280px) {
+            .masonry-container {
+                column-count: 4;
+            }
+        }
+
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            width: 100%;
+        }
+
         /* 终端数据块卡片 */
         .tech-card {
             background: rgba(15, 23, 42, 0.4);
@@ -115,6 +144,26 @@
             border-color: var(--accent); 
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
         }
+
+        /* 骨架屏样式与动画 */
+        .skeleton-block {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.7) 50%, rgba(30, 41, 59, 0.4) 100%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite ease-in-out;
+            border-radius: 2px;
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid #1e293b;
+            border-left: 4px solid #1e293b;
+            position: relative;
+        }
         
         /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; }
@@ -156,57 +205,132 @@
             </a>
         </nav>
 
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 flex-grow">
+        <!-- 骨架屏容器 (Skeleton Screen) -->
+        <div id="skeleton-grid" class="masonry-container flex-grow transition-opacity duration-300">
+            <!-- 骨架卡片 1 -->
+            <div class="masonry-item">
+                <div class="skeleton-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="skeleton-block h-5 w-20"></div>
+                        <div class="skeleton-block h-4 w-10"></div>
+                    </div>
+                    <div class="skeleton-block h-7 w-3/4 mb-4"></div>
+                    <div class="space-y-2 mb-6">
+                        <div class="skeleton-block h-4 w-full"></div>
+                        <div class="skeleton-block h-4 w-5/6"></div>
+                    </div>
+                    <div class="skeleton-block h-10 w-full"></div>
+                </div>
+            </div>
+
+            <!-- 骨架卡片 2 -->
+            <div class="masonry-item">
+                <div class="skeleton-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="skeleton-block h-5 w-24"></div>
+                        <div class="skeleton-block h-4 w-10"></div>
+                    </div>
+                    <div class="skeleton-block h-7 w-2/3 mb-4"></div>
+                    <div class="space-y-2 mb-6">
+                        <div class="skeleton-block h-4 w-full"></div>
+                        <div class="skeleton-block h-4 w-4/5"></div>
+                        <div class="skeleton-block h-4 w-3/4"></div>
+                    </div>
+                    <div class="skeleton-block h-10 w-full"></div>
+                </div>
+            </div>
+
+            <!-- 骨架卡片 3 -->
+            <div class="masonry-item">
+                <div class="skeleton-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="skeleton-block h-5 w-20"></div>
+                        <div class="skeleton-block h-4 w-10"></div>
+                    </div>
+                    <div class="skeleton-block h-7 w-1/2 mb-4"></div>
+                    <div class="space-y-2 mb-6">
+                        <div class="skeleton-block h-4 w-full"></div>
+                        <div class="skeleton-block h-4 w-3/5"></div>
+                    </div>
+                    <div class="skeleton-block h-10 w-full"></div>
+                </div>
+            </div>
+
+            <!-- 骨架卡片 4 -->
+            <div class="masonry-item">
+                <div class="skeleton-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <div class="skeleton-block h-5 w-28"></div>
+                        <div class="skeleton-block h-4 w-10"></div>
+                    </div>
+                    <div class="skeleton-block h-7 w-4/5 mb-4"></div>
+                    <div class="space-y-2 mb-6">
+                        <div class="skeleton-block h-4 w-full"></div>
+                        <div class="skeleton-block h-4 w-2/3"></div>
+                    </div>
+                    <div class="skeleton-block h-10 w-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 真实内容容器 (瀑布流 Masonry) -->
+        <main id="content-grid" class="masonry-container flex-grow opacity-0 pointer-events-none transition-all duration-500 translate-y-3 hidden">
             
-            <div class="tech-card p-6 flex flex-col">
-                <div class="flex justify-between items-start mb-5">
-                    <span class="text-xs font-bold px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                        CLASS: APP
-                    </span>
-                    <span class="text-slate-600 text-xs font-mono">#001</span>
+            <div class="masonry-item">
+                <div class="tech-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <span class="text-xs font-bold px-2 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            CLASS: APP
+                        </span>
+                        <span class="text-slate-600 text-xs font-mono">#001</span>
+                    </div>
+                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">喵斯计划通解锁</h3>
+                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                        > STATUS: 实时更新<br/>
+                        > INFO: 部署后无需手动更新
+                    </div>
+                    <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                        <span>> FETCH_DATA</span>
+                    </a>
                 </div>
-                <h3 class="font-black text-white text-xl mb-3 tracking-tight">喵斯计划通解锁</h3>
-                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                    > STATUS: 实时更新<br/>
-                    > INFO: 部署后无需手动更新
-                </div>
-                <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                    <span>> FETCH_DATA</span>
-                </a>
             </div>
 
-            <div class="tech-card p-6 flex flex-col">
-                <div class="flex justify-between items-start mb-5">
-                    <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        CLASS: TOOL
-                    </span>
-                    <span class="text-slate-600 text-xs font-mono">#002</span>
+            <div class="masonry-item">
+                <div class="tech-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            CLASS: TOOL
+                        </span>
+                        <span class="text-slate-600 text-xs font-mono">#002</span>
+                    </div>
+                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">Mohub 匿名树洞</h3>
+                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                        > STATUS: 模块正常运行<br/>
+                        > INFO: 点击载入留言与倾诉终端
+                    </div>
+                    <a href="../shudong/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                        <span>> EXECUTE</span>
+                    </a>
                 </div>
-                <h3 class="font-black text-white text-xl mb-3 tracking-tight">Mohub 匿名树洞</h3>
-                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                    > STATUS: 模块正常运行<br/>
-                    > INFO: 点击载入留言与倾诉终端
-                </div>
-                <a href="../shudong/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                    <span>> EXECUTE</span>
-                </a>
             </div>
 
-             <div class="tech-card p-6 flex flex-col">
-                <div class="flex justify-between items-start mb-5">
-                    <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        CLASS: Game
-                    </span>
-                    <span class="text-slate-600 text-xs font-mono">#003</span>
+            <div class="masonry-item">
+                <div class="tech-card p-6 flex flex-col">
+                    <div class="flex justify-between items-start mb-5">
+                        <span class="text-xs font-bold px-2 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            CLASS: Game
+                        </span>
+                        <span class="text-slate-600 text-xs font-mono">#003</span>
+                    </div>
+                    <h3 class="font-black text-white text-xl mb-3 tracking-tight">笨鸟先飞</h3>
+                    <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
+                        > STATUS: 游戏正常运行<br/>
+                        > GAME: 点击进行游玩
+                    </div>
+                    <a href="../game/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
+                        <span>> EXECUTE</span>
+                    </a>
                 </div>
-                <h3 class="font-black text-white text-xl mb-3 tracking-tight">笨鸟先飞</h3>
-                <div class="text-sm text-slate-400 mb-6 flex-grow font-mono leading-relaxed">
-                    > STATUS: 游戏正常运行<br/>
-                    > GAME: 点击进行游玩
-                </div>
-                <a href="../game/" class="btn-action w-full py-2.5 font-bold text-sm flex items-center justify-center uppercase tracking-widest group">
-                    <span>> EXECUTE</span>
-                </a>
             </div>
         </main>
 
@@ -218,5 +342,28 @@
 
     </div>
 
+    <script>
+        // 骨架屏平滑过渡到真实内容
+        window.addEventListener('DOMContentLoaded', () => {
+            const skeletonGrid = document.getElementById('skeleton-grid');
+            const contentGrid = document.getElementById('content-grid');
+
+            // 模拟短暂的数据流加载并平滑切换
+            setTimeout(() => {
+                skeletonGrid.classList.add('opacity-0', 'pointer-events-none');
+                
+                setTimeout(() => {
+                    skeletonGrid.classList.add('hidden');
+                    contentGrid.classList.remove('hidden');
+                    
+                    // 触发平滑淡入
+                    requestAnimationFrame(() => {
+                        contentGrid.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+                        contentGrid.classList.add('opacity-100', 'translate-y-0');
+                    });
+                }, 300);
+            }, 500); // 骨架屏展示 500ms，带来极佳的加载质感
+        });
+    </script>
 </body>
 </html>
