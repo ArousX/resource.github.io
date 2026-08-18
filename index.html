@@ -3,258 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArousX // Bento Grid 资源中枢</title>
+    <title>ArousX // Magic UI Bento Grid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./bento_style.css">
+    <link rel="stylesheet" href="./magicui.css">
 </head>
 <body>
-    <div class="ambient-glow"></div>
-    <div class="grid-overlay"></div>
+    <!-- Magic UI: Dot Pattern Background -->
+    <div class="dot-pattern-bg"></div>
 
     <div class="container">
-        <!-- 浮动胶囊导航 -->
+        <!-- Magic UI: Floating Navbar -->
         <header class="navbar">
             <a href="./" class="brand">
-                <div class="brand-icon">A</div>
-                <div class="brand-name">ArousX_CORE</div>
+                <div class="brand-icon">M</div>
+                <span style="font-weight: 700; font-size: 0.95rem; letter-spacing: -0.01em;">ArousX_CORE</span>
             </a>
-            <div class="nav-menu">
-                <a href="./catalog/" class="nav-link">资源档案</a>
-                <a href="./shudong/" class="nav-link">匿名树洞</a>
-                <a href="./game/" class="nav-link">飞行游戏</a>
-            </div>
-            <div class="nav-badge">
-                <span class="dot"></span>
+            <nav class="nav-links">
+                <a href="./catalog/" class="nav-item">资源目录</a>
+                <a href="./shudong/" class="nav-item">匿名树洞</a>
+                <a href="./game/" class="nav-item">飞行游戏</a>
+            </nav>
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.8rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 9999px; font-family: 'JetBrains Mono'; font-size: 0.72rem; color: #a1a1aa;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
                 <span>mohub.online</span>
             </div>
         </header>
 
-        <!-- 标头区域 -->
+        <!-- Magic UI: Hero with Animated Shiny Text -->
         <section class="hero-header">
-            <div class="hero-pill">
-                <span>🍱 BENTO GRID 架构 // 全新视觉</span>
+            <div class="shiny-badge-wrapper">
+                <div class="shiny-badge">
+                    <span class="shiny-text">✨ Powered by Magic UI Bento Grid</span>
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
             </div>
-            <h1 class="hero-title">汇聚资源、工具与极客应用</h1>
-            <p class="hero-subtitle">便当盒模块化设计，清晰整合云端资源档案、匿名心声终端与敏捷实验工具。</p>
+            <h1 class="hero-title">汇聚资源、工具与极客中枢</h1>
+            <p class="hero-desc">
+                基于 Magic UI 官方 Bento Grid 架构打造，集成 Marquee 跑马灯、Animated List 动态流与 Animated Beam 光束交互。
+            </p>
         </section>
 
-        <!-- ================= 12 列 BENTO GRID 便当盒 ================= -->
+        <!-- ================= Magic UI: Bento Grid Container ================= -->
         <main class="bento-grid">
 
-            <!-- 卡片 1: 核心档案总览 (大卡片: 8列宽 x 2行高) -->
-            <div class="bento-box col-8 row-2">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill indigo">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.72rem; font-weight: 800; color: #818cf8; letter-spacing: 0.05em;">MODULE / 01 · CENTRAL REPOSITORY</span>
-                            <span style="font-family: 'JetBrains Mono'; font-size: 0.72rem; color: var(--text-dim);">3 ACTIVE ITEMS</span>
-                        </div>
-                        <h2 class="box-title" style="font-size: 1.8rem;">核心资源档案库</h2>
-                        <p class="box-desc">聚合实用工具、破解资源与独立应用，支持分类检索与极速响应。</p>
-
-                        <!-- 内嵌可视化卡片列表 -->
-                        <div class="mockup-preview-stack">
-                            <div class="mockup-row">
-                                <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                    <span style="color: #c084fc;">📦</span>
-                                    <span style="font-weight: 600; color: #fff;">喵斯计划通全解锁</span>
+            <!-- Card 1: Save your files (Marquee Background) - 1 col -->
+            <div class="bento-card col-span-1">
+                <!-- Magic UI: Marquee Background -->
+                <div class="bento-background">
+                    <div class="marquee-container">
+                        <div class="marquee-track">
+                            <div class="marquee-item">
+                                <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+                                    <svg width="14" height="14" fill="none" stroke="#a855f7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: #fff;">喵斯计划通.pkg</span>
                                 </div>
-                                <span style="font-family: 'JetBrains Mono'; color: #94a3b8; font-size: 0.72rem;">夸克网盘 · 提取码直通</span>
+                                <p style="font-size: 0.68rem; color: #71717a;">夸克网盘极速转存提取</p>
                             </div>
-                            <div class="mockup-row">
-                                <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                    <span style="color: #34d399;">💬</span>
-                                    <span style="font-weight: 600; color: #fff;">Mohub 匿名树洞</span>
+                            <div class="marquee-item">
+                                <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+                                    <svg width="14" height="14" fill="none" stroke="#10b981" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: #fff;">Mohub_Shudong.sh</span>
                                 </div>
-                                <span style="font-family: 'JetBrains Mono'; color: #34d399; font-size: 0.72rem;">🟢 互动服务运行中</span>
+                                <p style="font-size: 0.68rem; color: #71717a;">匿名树洞互动终端</p>
                             </div>
-                            <div class="mockup-row">
-                                <div style="display: flex; align-items: center; gap: 0.6rem;">
-                                    <span style="color: #fbbf24;">🎮</span>
-                                    <span style="font-weight: 600; color: #fff;">笨鸟先飞飞行小游戏</span>
+                            <div class="marquee-item">
+                                <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+                                    <svg width="14" height="14" fill="none" stroke="#f59e0b" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: #fff;">Flappy_Canvas.game</span>
                                 </div>
-                                <span style="font-family: 'JetBrains Mono'; color: #fbbf24; font-size: 0.72rem;">⚡ HTML5 即点即玩</span>
+                                <p style="font-size: 0.68rem; color: #71717a;">敏捷避障休闲游戏</p>
+                            </div>
+                            <div class="marquee-item">
+                                <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+                                    <svg width="14" height="14" fill="none" stroke="#3b82f6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                    <span style="font-size: 0.75rem; font-weight: 600; color: #fff;">Cloud_Archive.rar</span>
+                                </div>
+                                <p style="font-size: 0.68rem; color: #71717a;">全站资源归档包</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1.5rem;">
-                        <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">自适应瀑布流展示</span>
-                        <a href="./catalog/" class="btn-primary">
-                            <span>探索完整资源目录</span>
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- 卡片 2: 匿名树洞 (4列宽 x 2行高) -->
-            <div class="bento-box col-4 row-2">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill emerald">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                        </div>
-                        <div style="font-size: 0.72rem; font-weight: 800; color: #34d399; margin-bottom: 0.4rem;">TOOL #002</div>
-                        <h3 class="box-title">Mohub 匿名树洞</h3>
-                        <p class="box-desc">安全保密的匿名留言终端，记录心声与倾诉。</p>
+                <!-- Magic UI: Bento Content -->
+                <div class="bento-content">
+                    <svg class="bento-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <h3 class="bento-title">资源档案总览</h3>
+                    <p class="bento-desc">收录整理全站实用工具、破解资源与便捷扩展，支持分类检索。</p>
+                </div>
 
-                        <!-- 内嵌模拟气泡组件 -->
-                        <div class="mockup-chat-bubble">
-                            <span style="font-size: 0.7rem; color: #6ee7b7; font-family: 'JetBrains Mono';">匿名访客 · 刚刚</span>
-                            <span>“把想说的留在树洞里，总有人会默默听见...”</span>
-                        </div>
-                    </div>
-
-                    <a href="./shudong/" class="btn-sub">
-                        <span>进入树洞终端</span>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <!-- Magic UI: Hover CTA Button -->
+                <div class="bento-cta">
+                    <a href="./catalog/" class="magic-btn">
+                        <span>进入完整目录</span>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
+                <div class="bento-overlay"></div>
             </div>
 
-            <!-- 卡片 3: 精选夸克网盘资源 (8列宽 x 1行高) -->
-            <div class="bento-box col-8">
-                <div class="box-inner">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                        <div>
-                            <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.6rem; border-radius: 0.4rem; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc; font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem;">
-                                🔥 精选推荐 · 夸克网盘
+            <!-- Card 2: Notifications / Mohub 匿名树洞 (Animated List Background) - 2 cols -->
+            <div class="bento-card col-span-2">
+                <!-- Magic UI: Animated List Background -->
+                <div class="bento-background">
+                    <div class="animated-list-wrap">
+                        <div class="list-item">
+                            <div class="list-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">💬</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-weight: 600; color: #fff;">匿名访客 · 动态</span>
+                                    <span style="font-size: 0.68rem; color: #71717a;">1m ago</span>
+                                </div>
+                                <p style="font-size: 0.72rem; color: #a1a1aa; margin-top: 0.1rem;">“把想说的话留在树洞里，总有人会默默听见...”</p>
                             </div>
-                            <h3 class="box-title">喵斯计划通全解锁</h3>
-                            <p class="box-desc">全DLC全曲包解锁支持，高速通道一键转存下载。</p>
                         </div>
-
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                <span style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-dim);">提取码:</span>
-                                <div class="code-pill">jnt6</div>
-                                <button onclick="copyPassword('jnt6')" class="copy-btn" title="复制">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                </button>
+                        <div class="list-item">
+                            <div class="list-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">🔒</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-weight: 600; color: #fff;">端到端匿名通道</span>
+                                    <span style="font-size: 0.68rem; color: #71717a;">5m ago</span>
+                                </div>
+                                <p style="font-size: 0.72rem; color: #a1a1aa; margin-top: 0.1rem;">安全无痕的倾诉与分享终端，保护每一次心声</p>
                             </div>
-                            <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="btn-primary" style="background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);">
-                                <span>转存下载</span>
-                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            </a>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">✨</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-weight: 600; color: #fff;">Mohub 服务正常</span>
+                                    <span style="font-size: 0.68rem; color: #71717a;">10m ago</span>
+                                </div>
+                                <p style="font-size: 0.72rem; color: #a1a1aa; margin-top: 0.1rem;">匿名互动终端与留言板服务稳定运行中</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- 卡片 4: 敏捷小游戏 (4列宽 x 1行高) -->
-            <div class="bento-box col-4">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill amber">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div style="font-size: 0.72rem; font-weight: 800; color: #fbbf24; margin-bottom: 0.4rem;">GAME #003</div>
-                        <h3 class="box-title">飞行穿梭小游戏</h3>
-                        <p class="box-desc">HTML5 Canvas 原生避障挑战，考验敏捷手速。</p>
-                    </div>
+                <!-- Magic UI: Bento Content -->
+                <div class="bento-content">
+                    <svg class="bento-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <h3 class="bento-title">Mohub 匿名树洞</h3>
+                    <p class="bento-desc">安全保密的匿名互动与留言终端，倾听每一次真实心声与情绪记录。</p>
+                </div>
 
-                    <a href="./game/" class="btn-sub" style="margin-top: 1rem;">
-                        <span>即刻开玩 🎮</span>
+                <!-- Magic UI: Hover CTA Button -->
+                <div class="bento-cta">
+                    <a href="./shudong/" class="magic-btn">
+                        <span>打开树洞终端</span>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
+                <div class="bento-overlay"></div>
             </div>
 
-            <!-- 卡片 5: 全球网络部署 (4列宽 x 1行高) -->
-            <div class="bento-box col-4">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill cyan">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            <!-- Card 3: Integrations / 喵斯计划通 (Animated Beam Background) - 2 cols -->
+            <div class="bento-card col-span-2">
+                <!-- Magic UI: Animated Beam Background -->
+                <div class="bento-background">
+                    <div class="animated-beam-wrap">
+                        <div class="beam-node" title="Quark Cloud">
+                            <svg width="20" height="20" fill="none" stroke="#c084fc" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
                         </div>
-                        <div style="font-size: 0.72rem; font-weight: 800; color: #22d3ee; margin-bottom: 0.4rem;">NETWORK EDGE</div>
-                        <h3 class="box-title">全球网络节点</h3>
-                        <div style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.6rem;">
-                            <div style="display: flex; justify-content: space-between;"><span>DOM:</span><span style="color: #22d3ee;">mohub.online</span></div>
-                            <div style="display: flex; justify-content: space-between;"><span>SSL:</span><span style="color: #34d399;">TLS 1.3 ACTIVE</span></div>
-                            <div style="display: flex; justify-content: space-between;"><span>PING:</span><span style="color: #fff;">~14ms</span></div>
+                        <!-- Animated SVG Beam -->
+                        <svg width="120" height="40" viewBox="0 0 120 40" style="overflow: visible;">
+                            <path d="M 0 20 L 120 20" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                            <path d="M 0 20 L 120 20" stroke="url(#beam-grad)" stroke-width="3" stroke-dasharray="20 100" stroke-dashoffset="0">
+                                <animate attributeName="stroke-dashoffset" values="120;0" dur="2s" repeatCount="indefinite" />
+                            </path>
+                            <defs>
+                                <linearGradient id="beam-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#3b82f6" />
+                                    <stop offset="100%" stop-color="#a855f7" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="beam-node" title="ArousX CORE" style="border-color: #3b82f6;">
+                            <svg width="20" height="20" fill="none" stroke="#60a5fa" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <!-- Animated SVG Beam -->
+                        <svg width="120" height="40" viewBox="0 0 120 40" style="overflow: visible;">
+                            <path d="M 0 20 L 120 20" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                            <path d="M 0 20 L 120 20" stroke="url(#beam-grad2)" stroke-width="3" stroke-dasharray="20 100" stroke-dashoffset="0">
+                                <animate attributeName="stroke-dashoffset" values="120;0" dur="2s" repeatCount="indefinite" />
+                            </path>
+                            <defs>
+                                <linearGradient id="beam-grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#10b981" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="beam-node" title="Client Download" style="border-color: #10b981;">
+                            <svg width="20" height="20" fill="none" stroke="#34d399" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         </div>
                     </div>
                 </div>
+
+                <!-- Magic UI: Bento Content -->
+                <div class="bento-content">
+                    <svg class="bento-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                    <h3 class="bento-title">喵斯计划通全解锁</h3>
+                    <p class="bento-desc">夸克网盘极速转存直连，包含全DLC曲包及最新更新通道。</p>
+                </div>
+
+                <!-- Magic UI: Hover CTA Button & Password Pill -->
+                <div class="bento-cta" style="display: flex; justify-content: space-between; align-items: center;">
+                    <a href="https://pan.quark.cn/s/d6547496bff2?pwd=jnt6" target="_blank" class="magic-btn">
+                        <span>转存与下载</span>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </a>
+                    <div class="code-pill">
+                        <span>提取码: jnt6</span>
+                        <button onclick="copyPassword('jnt6')" style="background:none; border:none; color:#a1a1aa; cursor:pointer; padding:2px;" title="复制">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="bento-overlay"></div>
             </div>
 
-            <!-- 卡片 6: 开源贡献 (4列宽 x 1行高) -->
-            <div class="bento-box col-4">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill" style="background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: #fff;">
-                            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
-                        </div>
-                        <div style="font-size: 0.72rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">GITHUB REPO</div>
-                        <h3 class="box-title">开源与代码</h3>
-                        <p class="box-desc">GitHub 开源归档，欢迎 Star 或提交 PR 贡献。</p>
+            <!-- Card 4: Meteors / 敏捷小游戏 - 1 col -->
+            <div class="bento-card col-span-1">
+                <!-- Magic UI: Meteors Background -->
+                <div class="bento-background">
+                    <div class="meteors-wrap">
+                        <div class="meteor" style="top: 20%; left: 80%; animation-delay: 0.2s;"></div>
+                        <div class="meteor" style="top: 45%; left: 90%; animation-delay: 1.1s;"></div>
+                        <div class="meteor" style="top: 70%; left: 60%; animation-delay: 2.3s;"></div>
                     </div>
-                    <a href="https://github.com/ArousX/resource.github.io" target="_blank" class="btn-sub" style="margin-top: 1rem;">
-                        <span>访问 GitHub 源码</span>
+                </div>
+
+                <!-- Magic UI: Bento Content -->
+                <div class="bento-content">
+                    <svg class="bento-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3 class="bento-title">飞行穿梭小游戏</h3>
+                    <p class="bento-desc">HTML5 Canvas 原生极客躲避小游戏，测试极限敏捷手速。</p>
+                </div>
+
+                <!-- Magic UI: Hover CTA Button -->
+                <div class="bento-cta">
+                    <a href="./game/" class="magic-btn">
+                        <span>即刻开玩</span>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
-            </div>
-
-            <!-- 卡片 7: 实时时钟与会话 (4列宽 x 1行高) -->
-            <div class="bento-box col-4">
-                <div class="box-inner">
-                    <div>
-                        <div class="icon-pill" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); color: #818cf8;">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div style="font-size: 0.72rem; font-weight: 800; color: #818cf8; margin-bottom: 0.4rem;">SYSTEM CLOCK</div>
-                        <h3 class="box-title" id="live-clock" style="font-family: 'JetBrains Mono'; font-size: 1.6rem;">00:00:00</h3>
-                        <p class="box-desc" style="font-family: 'JetBrains Mono'; font-size: 0.75rem;">LOCAL SESSION ACTIVE</p>
-                    </div>
-                </div>
+                <div class="bento-overlay"></div>
             </div>
 
         </main>
 
-        <!-- 底部 -->
-        <footer class="footer">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="dot"></span>
-                <span>ArousX_CORE © 2026 · Bento Grid Edition</span>
-            </div>
-            <div>
-                <a href="https://mohub.online" style="color: var(--text-muted); text-decoration: none;">mohub.online</a>
+        <!-- Footer -->
+        <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08); font-family: 'JetBrains Mono'; font-size: 0.75rem; color: #71717a; display: flex; justify-content: space-between; align-items: center;">
+            <div>ArousX_CORE © 2026 · Magic UI Architecture</div>
+            <div style="display: flex; gap: 1.5rem;">
+                <a href="./catalog/" style="color: #a1a1aa; text-decoration: none;">Catalog</a>
+                <a href="./shudong/" style="color: #a1a1aa; text-decoration: none;">Shudong</a>
+                <a href="./game/" style="color: #a1a1aa; text-decoration: none;">Game</a>
+                <a href="https://mohub.online" style="color: #a1a1aa; text-decoration: none;">mohub.online</a>
             </div>
         </footer>
     </div>
 
     <!-- 复制 Toast -->
     <div id="toast" class="toast">
-        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #34d399;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <svg width="14" height="14" fill="none" stroke="#10b981" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         <span id="toast-msg">已复制提取码！</span>
     </div>
 
     <script>
-        // 鼠标聚光灯
-        document.querySelectorAll('.bento-box').forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
-                card.style.setProperty('--mouse-y', (e.clientY - rect.top) + 'px');
-            });
-        });
-
-        // 实时时钟
-        function updateClock() {
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-            const el = document.getElementById('live-clock');
-            if (el) el.innerText = timeStr;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // 复制提取码
         function copyPassword(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');

@@ -1,0 +1,506 @@
+/* ==========================================================================
+   Magic UI (https://magicui.design) Official Component Styles
+   100% Authentic implementation of Magic UI Bento Grid, Marquee, 
+   Animated List, Animated Beam, Border Beam, Meteors, and Dot Pattern.
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --background: #000000;
+    --foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --card: #09090b;
+    --card-foreground: #fafafa;
+    --border: rgba(255, 255, 255, 0.1);
+    --radius: 0.75rem;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Plus Jakarta Sans', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Magic UI: Dot Pattern Background */
+.dot-pattern-bg {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 70%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, #000 70%, transparent 100%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Magic UI Header & Navigation */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: rgba(9, 9, 11, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    margin-bottom: 3.5rem;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.8);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: #fff;
+}
+
+.brand-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.nav-item {
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    transition: all 0.2s;
+}
+
+.nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Magic UI: Animated Shiny Text Badge */
+.shiny-badge-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.shiny-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #a1a1aa;
+    text-decoration: none;
+    transition: border-color 0.2s;
+}
+
+.shiny-badge:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.shiny-text {
+    background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.4) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shiny-anim 3s infinite linear;
+}
+
+@keyframes shiny-anim {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+.hero-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+.hero-desc {
+    color: var(--muted-foreground);
+    font-size: 1.05rem;
+    max-width: 40rem;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ================= Magic UI: Bento Grid Container ================= */
+.bento-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+    auto-rows: 22rem;
+}
+
+@media (min-width: 768px) {
+    .bento-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Magic UI: BentoCard component */
+.bento-card {
+    group: true;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 -20px 80px -20px rgba(255, 255, 255, 0.12) inset;
+    transform: translateZ(0);
+    transition: all 0.3s ease-out;
+}
+
+.bento-card:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Grid Spanning */
+.col-span-1 { grid-column: span 1 / span 1; }
+.col-span-2 { grid-column: span 2 / span 2; }
+.col-span-3 { grid-column: span 3 / span 3; }
+
+@media (max-width: 768px) {
+    .col-span-1, .col-span-2, .col-span-3 {
+        grid-column: span 1 / span 1;
+    }
+}
+
+/* Magic UI: Background Slot */
+.bento-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Magic UI: Content Container (Slides up on hover) */
+.bento-content {
+    pointer-events: none;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.5rem;
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover .bento-content {
+    transform: translateY(-2.5rem);
+}
+
+/* Magic UI: Card Icon (Scales down on hover) */
+.bento-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    color: #e4e4e7;
+    margin-bottom: 0.75rem;
+    transform-origin: left center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover .bento-icon {
+    transform: scale(0.75);
+}
+
+.bento-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fafafa;
+}
+
+.bento-desc {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    line-height: 1.5;
+    max-width: 28rem;
+}
+
+/* Magic UI: Bottom CTA Button (Slides up & fades in on hover) */
+.bento-cta {
+    pointer-events: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    opacity: 0;
+    transform: translateY(2.5rem);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 20;
+}
+
+.bento-card:hover .bento-cta {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.magic-btn {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: #000000;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.magic-btn:hover {
+    background: #e4e4e7;
+    transform: translateX(2px);
+}
+
+/* Magic UI: Dark Overlay on Hover */
+.bento-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    transition: background 0.3s;
+    z-index: 5;
+}
+
+.bento-card:hover .bento-overlay {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ================= Magic UI: Marquee Component ================= */
+.marquee-container {
+    position: absolute;
+    top: 1.5rem;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to top, transparent 20%, #000 100%);
+    -webkit-mask-image: linear-gradient(to top, transparent 20%, #000 100%);
+}
+
+.marquee-track {
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+    animation: marquee 22s linear infinite;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.marquee-item {
+    width: 10rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+}
+
+.marquee-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ================= Magic UI: Animated List Component ================= */
+.animated-list-wrap {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 90%;
+    max-width: 22rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    mask-image: linear-gradient(to top, transparent 10%, #000 100%);
+    -webkit-mask-image: linear-gradient(to top, transparent 10%, #000 100%);
+    transition: transform 0.3s ease-out;
+}
+
+.bento-card:hover .animated-list-wrap {
+    transform: scale(0.95);
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    font-size: 0.78rem;
+}
+
+.list-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ================= Magic UI: Animated Beam Component ================= */
+.animated-beam-wrap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 2rem;
+    mask-image: linear-gradient(to top, transparent 15%, #000 100%);
+    -webkit-mask-image: linear-gradient(to top, transparent 15%, #000 100%);
+}
+
+.beam-node {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* ================= Magic UI: Meteors Component ================= */
+.meteors-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.meteor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 2px;
+    width: 50px;
+    background: linear-gradient(to right, #ffffff, transparent);
+    transform: rotate(215deg);
+    animation: meteor-anim 3s linear infinite;
+}
+
+@keyframes meteor-anim {
+    0% { transform: rotate(215deg) translateX(0); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: rotate(215deg) translateX(-400px); opacity: 0; }
+}
+
+/* ================= Magic UI: Border Beam Component ================= */
+.border-beam-box {
+    position: relative;
+}
+
+.border-beam-line {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    pointer-events: none;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+}
+
+/* 提取码胶囊 */
+.code-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #60a5fa;
+    pointer-events: auto;
+}
+
+.toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+    background: #18181b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fafafa;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+}
