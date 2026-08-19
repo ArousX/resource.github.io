@@ -137,12 +137,9 @@ class InkWashBackground {
             // 径向水墨渐变
             const grad = this.ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, curRadius);
             const { r, g, b, a } = n.color;
-            grad.addColorStop(0, 
-gba(, , , ));
-            grad.addColorStop(0.35, 
-gba(, , , ));
-            grad.addColorStop(0.7, 
-gba(, , , ));
+            grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${a})`);
+            grad.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${a * 0.6})`);
+            grad.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${a * 0.3})`);
             grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
             this.ctx.fillStyle = grad;
@@ -167,8 +164,8 @@ gba(, , , ));
 
             const currentAlpha = d.alpha * d.life;
             const dropGrad = this.ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.radius);
-            dropGrad.addColorStop(0, ${d.color}));
-            dropGrad.addColorStop(0.6, ${d.color}));
+            dropGrad.addColorStop(0, `${d.color}${currentAlpha})`);
+            dropGrad.addColorStop(0.6, `${d.color}${currentAlpha * 0.5})`);
             dropGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
             this.ctx.fillStyle = dropGrad;
